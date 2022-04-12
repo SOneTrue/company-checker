@@ -3,6 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
+from loguru import logger
 
 from logger import setup_logger
 from tgbot.config import load_config
