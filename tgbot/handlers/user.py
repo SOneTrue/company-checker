@@ -1,11 +1,11 @@
 from aiogram import Dispatcher
 from aiogram.types import Message
 
-from tgbot.keyboards.reply import start_default
+from tgbot.models.users import User
 
 
-async def user_start(message: Message):
-    await message.reply("Hello, user!", reply_markup=start_default)
+async def user_start(message: Message, user: User):
+    await message.reply("Hello, user!")
 
 
 def register_user(dp: Dispatcher):
