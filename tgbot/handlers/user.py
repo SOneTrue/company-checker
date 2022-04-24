@@ -23,7 +23,7 @@ async def state_name(message: Message, state: FSMContext):
 
 
 async def inline_mode(call: CallbackQuery):
-    await call.message.send_copy(call.message.from_user.id)
+    await call.message.answer('Ok')
 
 
 def register_user(dp: Dispatcher):
