@@ -1,7 +1,8 @@
 import asyncio
 from contextlib import suppress
 
-from sqlalchemy import Column, BigInteger, insert, String, ForeignKey, update, func
+from loguru import logger
+from sqlalchemy import Column, BigInteger, insert, String, update, func
 from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
@@ -55,44 +56,8 @@ class User(Base):
             await db_session.commit()
             return result
 
-    @classmethod
-    async def count_referrals(cls, session_maker: sessionmaker, user: "User"):
-        async with session_maker() as db_session:
-            sql = select(
-                func.count(Referral.telegram_id)
-            ).where(
-                Referral.referrer == user.telegram_id
-            ).join(
-                User
-            ).group_by(
-                Referral.referrer
-            )
-            result = await db_session.execute(sql)
-            return result.scalar()
-
     def __repr__(self):
         return f'User (ID: {self.telegram_id} - {self.first_name} {self.last_name})'
-
-
-class Referral(Base):
-    __tablename__ = "referral_users"
-    telegram_id = Column(BigInteger, primary_key=True)
-    referrer = Column(ForeignKey(User.telegram_id, ondelete='CASCADE'))
-
-    @classmethod
-    async def add_user(cls,
-                       db_session: sessionmaker,
-                       telegram_id: int,
-                       referrer: int
-                       ) -> 'User':
-        async with db_session() as db_session:
-            sql = insert(cls).values(
-                telegram_id=telegram_id,
-                referrer=referrer
-            )
-            result = await db_session.execute(sql)
-            await db_session.commit()
-            return result
 
 
 if __name__ == '__main__':
@@ -115,15 +80,7 @@ if __name__ == '__main__':
             with suppress(sqlalchemy.exc.IntegrityError):
                 user = await User.add_user(session_maker, user_id, first_name)
                 # user = await User.get_user(session, user_id)
-                print(user)
-
-                referrer = user
-
-                if referrer:
-                    await Referral.add_user(session_maker, user_id, referrer.telegram_id)
-
-                refs = await User.count_referrals(session_maker, user)
-                print(refs)
+                logger.info(user)
 
 
     asyncio.run(test())
