@@ -1,8 +1,6 @@
-import types
-
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery, ContentType
+from aiogram.types import Message, CallbackQuery
 
 from tgbot.filters.button_filter import Button
 from tgbot.keyboards.inline import accept_keyboard
@@ -21,12 +19,17 @@ async def state_name(message: Message, state: FSMContext):
     await state.finish()
     await message.answer(f'Вы ввели {answer}')
 
-
-async def inline_mode(call: CallbackQuery):
+#TODO доделать ответ пользователю после нажатия кнопки, одобрено или нет.
+async def inline_accept(call: CallbackQuery):
     await call.message.answer('Ok')
+
+
+async def inline_cancel(call: CallbackQuery):
+    await call.message.answer('Bad')
 
 
 def register_user(dp: Dispatcher):
     dp.register_message_handler(user_start, commands=["start"])
     dp.register_message_handler(state_name, state=Name.send_name)
-    dp.register_callback_query_handler(inline_mode, Button('accept'))
+    dp.register_callback_query_handler(inline_accept, Button('accept'))
+    dp.register_callback_query_handler(inline_cancel, Button('cancel'))
