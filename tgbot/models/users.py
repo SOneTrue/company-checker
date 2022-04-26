@@ -44,7 +44,6 @@ class User(Base):
             await db_session.commit()
             return result.first()
 
-
     async def update_user(self, session_maker: sessionmaker, updated_fields: dict) -> 'User':
         async with session_maker() as db_session:
             sql = update(User).where(User.telegram_id == self.telegram_id).values(**updated_fields)
