@@ -24,8 +24,8 @@ async def user_start(message: Message, user: User):
 async def state_name(message: Message, state: FSMContext, user: User):
     answer = message.text
     await message.send_copy(-1001709967985, reply_markup=accept_keyboard)
-    await state.finish()
     await user.update_user(session_maker=await start_db(), updated_fields={'real_name': answer})
+    await state.finish()
     await message.answer(f'Вы ввели {answer}')
 
 
