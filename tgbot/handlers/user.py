@@ -24,15 +24,15 @@ async def user_start(message: Message, user: User):
 async def state_name(message: Message, state: FSMContext, user: User):
     answer = message.text
     await message.send_copy(-1001709967985, reply_markup=accept_keyboard)
-    await user.update_user(session_maker=await start_db(), updated_fields={'real_name': answer})
     await state.finish()
     await message.answer(f'Вы ввели {answer}')
 
 
-# TODO доделать ответ пользователю после нажатия кнопки, одобрено или нет.
-async def inline_accept(call: CallbackQuery):
+async def inline_accept(call: CallbackQuery, user: User):
     await call.message.answer('Ok')
-    await call.message.forward(1462906954)
+    answer = call.message.text
+    await call.message.forward(user.telegram_id)
+    await user.update_user(session_maker=await start_db(), updated_fields={'real_name': answer})
 
 
 async def inline_cancel(call: CallbackQuery):
