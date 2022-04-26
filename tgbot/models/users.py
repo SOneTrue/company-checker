@@ -1,13 +1,7 @@
-import asyncio
-from contextlib import suppress
-
-from loguru import logger
-from sqlalchemy import Column, BigInteger, insert, String, update, func
+from sqlalchemy import Column, BigInteger, insert, String, update
 from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
 
-from tgbot.config import load_config
-from tgbot.services.database import create_db_session
 from tgbot.services.db_base import Base
 
 
@@ -17,6 +11,7 @@ class User(Base):
     first_name = Column(String(length=100))
     last_name = Column(String(length=100), nullable=True)
     username = Column(String(length=100), nullable=True)
+    real_name = Column(String(length=100), nullable=True)
     lang_code = Column(String(length=4), default='ru_RU')
     role = Column(String(length=100), default='user')
 
@@ -49,6 +44,7 @@ class User(Base):
             await db_session.commit()
             return result.first()
 
+
     async def update_user(self, session_maker: sessionmaker, updated_fields: dict) -> 'User':
         async with session_maker() as db_session:
             sql = update(User).where(User.telegram_id == self.telegram_id).values(**updated_fields)
@@ -58,29 +54,3 @@ class User(Base):
 
     def __repr__(self):
         return f'User (ID: {self.telegram_id} - {self.first_name} {self.last_name})'
-
-
-if __name__ == '__main__':
-    from faker import Faker
-    import sqlalchemy.exc
-
-
-    async def test():
-
-        fake = Faker()
-        Faker.seed(0)
-
-        config = load_config()
-        session_maker = await create_db_session(config)
-
-        ids = [num for num in range(1, 101)]
-        names = [fake.first_name() for _ in range(1, 101)]
-
-        for user_id, first_name in zip(ids, names):
-            with suppress(sqlalchemy.exc.IntegrityError):
-                user = await User.add_user(session_maker, user_id, first_name)
-                # user = await User.get_user(session, user_id)
-                logger.info(user)
-
-
-    asyncio.run(test())
