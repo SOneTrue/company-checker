@@ -2,18 +2,11 @@ from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from tgbot.config import load_config
 from tgbot.filters.button_filter import Button
 from tgbot.keyboards.inline import accept_keyboard
 from tgbot.misc.states import Name
 from tgbot.models.users import User
-from tgbot.services.database import create_db_session
-
-
-async def start_db():
-    config = load_config()
-    session_maker = await create_db_session(config)
-    return session_maker
+from tgbot.services.database import start_db
 
 
 async def user_start(message: Message, user: User):
