@@ -2,6 +2,7 @@ from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 from tgbot.misc.states import Name
+from tgbot.models.users import update_user
 
 
 async def user_start(message: Message):
@@ -11,6 +12,10 @@ async def user_start(message: Message):
 
 async def add_user_name(message: Message, state: FSMContext):
     await message.answer("Готово")
+    telegram_id = message.from_user.id
+    print(telegram_id)
+    rname = message.text
+    await update_user(telegram_id=telegram_id, rname=rname)
     await state.finish()
 
 
