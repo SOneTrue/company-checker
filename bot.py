@@ -9,8 +9,10 @@ from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
 from tgbot.filters.logger import setup_logger
 from tgbot.handlers.admin import register_admin
-from tgbot.handlers.echo import register_echo
 from tgbot.handlers.user import register_user
+from tgbot.handlers.add_info import register_info
+# from tgbot.handlers.add_info import register_photo
+from tgbot.handlers.echo import register_echo
 from tgbot.middlewares.db import DbMiddleware
 
 
@@ -25,6 +27,8 @@ def register_all_filters(dp):
 def register_all_handlers(dp):
     register_admin(dp)
     register_user(dp)
+    register_info(dp)
+    # register_photo(dp)
 
     register_echo(dp)
 
