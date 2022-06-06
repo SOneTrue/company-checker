@@ -4,10 +4,39 @@ from aiogram.types import Message
 from tgbot.misc.states import Name
 
 
-async def user_photo_fuel(message: Message, state: FSMContext):
-    await message.answer(f'Готово')
-    await state.finish()
+async def user_photo_fuel(message: Message):
+    await message.answer(f'Датчик фото загружен.\n'
+                         f'Загрузите фото авто, вид спереди.')
+    await Name.send_auto_front.set()
+
+
+async def user_auto_front(message: Message):
+    await message.answer(f'Фото авто, вид спереди загружен.\n'
+                         f'Загрузите фото авто, вид сзади.')
+    await Name.send_auto_back.set()
+
+
+async def user_auto_back(message: Message):
+    await message.answer(f'Фото авто, вид сзади загружен.\n'
+                         f'Загрузите фото авто, вид слева.')
+    await Name.send_auto_left.set()
+
+
+async def user_auto_left(message: Message):
+    await message.answer(f'Фото авто, вид слева загружен.\n'
+                         f'Загрузите фото авто, вид справа.')
+    await Name.send_auto_right.set()
+
+
+async def user_auto_right(message: Message, state: FSMContext):
+    await message.answer(f'Фото авто, вид справа загружен.\n'
+                         f'Успешная загрузка фото.')
+    await state.reset_state(with_data=False)
 
 
 def register_photo(dp: Dispatcher):
     dp.register_message_handler(user_photo_fuel, state=Name.send_photo_fuel, content_types=types.ContentTypes.PHOTO)
+    dp.register_message_handler(user_auto_front, state=Name.send_auto_front, content_types=types.ContentTypes.PHOTO)
+    dp.register_message_handler(user_auto_back, state=Name.send_auto_back, content_types=types.ContentTypes.PHOTO)
+    dp.register_message_handler(user_auto_left, state=Name.send_auto_left, content_types=types.ContentTypes.PHOTO)
+    dp.register_message_handler(user_auto_right, state=Name.send_auto_right, content_types=types.ContentTypes.PHOTO)

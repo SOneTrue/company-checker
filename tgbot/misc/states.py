@@ -8,3 +8,7 @@ class Name(StatesGroup):
     send_odometer = State()
 
     send_photo_fuel = State()
+    send_auto_front = State()
+    send_auto_back = State()
+    send_auto_left = State()
+    send_auto_right = State()
