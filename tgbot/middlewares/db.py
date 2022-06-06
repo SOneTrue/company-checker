@@ -1,24 +1,26 @@
 from aiogram import types
 from aiogram.dispatcher.middlewares import LifetimeControllerMiddleware
 
-from tgbot.models.users import User
+from tgbot.models.users import get_user, add_user
 
 
 class DbMiddleware(LifetimeControllerMiddleware):
     skip_patterns = ["error", "update"]
 
     async def pre_process(self, obj, data, *args):
-        session_maker = obj.bot.get('db')
         telegram_user: types.User = obj.from_user
-        user = await User.get_user(session_maker=session_maker, telegram_id=telegram_user.id)
+        user = await get_user()
         if not user:
-            user = await User.add_user(session_maker,
-                                       telegram_user.id,
-                                       first_name=telegram_user.first_name,
-                                       last_name=telegram_user.last_name,
-                                       username=telegram_user.username,
-                                       lang_code=telegram_user.language_code,
-                                       role='user'
-                                       )
+            user = await add_user(telegram_user.id,
+                                  username=telegram_user.username,
+                                  fname=telegram_user.first_name,
+                                  lname=telegram_user.last_name,
+                                  rname=None,
+                                  number_auto=None,
+                                  road_list=None,
+                                  odometer=None,
+                                  odometer_back=None,
+                                  litre_back=None,
+                                  )
 
         data['user'] = user

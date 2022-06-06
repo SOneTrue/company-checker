@@ -2,7 +2,7 @@ import asyncio
 
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.contrib.fsm_storage.redis import RedisStorage
+from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from loguru import logger
 
 from tgbot.config import load_config
@@ -12,7 +12,6 @@ from tgbot.handlers.admin import register_admin
 from tgbot.handlers.echo import register_echo
 from tgbot.handlers.user import register_user
 from tgbot.middlewares.db import DbMiddleware
-from tgbot.services.database import create_db_session
 
 
 def register_all_middlewares(dp):
@@ -36,7 +35,7 @@ async def main():
     config = load_config(".env")
 
     if config.tg_bot.use_redis:
-        storage = RedisStorage()
+        storage = RedisStorage2()
     else:
         storage = MemoryStorage()
 
@@ -44,7 +43,6 @@ async def main():
     dp = Dispatcher(bot, storage=storage)
 
     bot['config'] = config
-    bot['db'] = await create_db_session(config)
 
     register_all_middlewares(dp)
     register_all_filters(dp)
