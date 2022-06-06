@@ -21,9 +21,17 @@ async def get_user():
     return row
 
 
-async def update_user(rname, telegram_id):
+async def update_user(telegram_id, rname):
     sql = """Update users set rname = ? where telegram_id = ?"""
     data = (rname, telegram_id)
     cur.execute(sql, data)
     con.commit()
-    print(f'Запись {data}, обновлена')
+
+
+async def get_info_user(telegram_id):
+    sql = """select rname from users where telegram_id = ?"""
+    cur.execute(sql, (telegram_id,))
+    params = cur.fetchone()
+    # for row in params:
+    #     return row[5]
+    return params
