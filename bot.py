@@ -11,9 +11,10 @@ from tgbot.filters.logger import setup_logger
 from tgbot.handlers.admin import register_admin
 from tgbot.handlers.user import register_user
 from tgbot.handlers.add_info import register_info
-# from tgbot.handlers.add_info import register_photo
+from tgbot.handlers.add_photo import register_photo
 from tgbot.handlers.echo import register_echo
 from tgbot.middlewares.db import DbMiddleware
+from tgbot.misc.set_bot_commands import set_default_commands
 
 
 def register_all_middlewares(dp):
@@ -28,7 +29,7 @@ def register_all_handlers(dp):
     register_admin(dp)
     register_user(dp)
     register_info(dp)
-    # register_photo(dp)
+    register_photo(dp)
 
     register_echo(dp)
 
@@ -50,6 +51,7 @@ async def main():
 
     register_all_middlewares(dp)
     register_all_filters(dp)
+    await set_default_commands(dp)
     register_all_handlers(dp)
 
     # start
