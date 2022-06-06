@@ -19,3 +19,11 @@ async def get_user():
     cur.execute(sql)
     row = cur.fetchall()
     return row
+
+
+async def update_user(rname, telegram_id):
+    sql = """Update users set rname = ? where telegram_id = ?"""
+    data = (rname, telegram_id)
+    cur.execute(sql, data)
+    con.commit()
+    print(f'Запись {data}, обновлена')
