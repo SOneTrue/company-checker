@@ -6,15 +6,15 @@ from tgbot.models.users import update_user
 
 
 async def user_start(message: Message):
-    await message.reply("Здравствуйте, введите ФИО для дальнейшей работы с ботом")
+    await message.answer("Здравствуйте, введите ФИО для дальнейшей работы с ботом")
     await Name.send_name.set()
 
 
 async def add_user_name(message: Message, state: FSMContext):
-    await message.answer("Готово")
     telegram_id = message.from_user.id
     rname = message.text
     await update_user(telegram_id=telegram_id, rname=rname)
+    await message.answer('Имя добавлено')
     await state.finish()
 
 
