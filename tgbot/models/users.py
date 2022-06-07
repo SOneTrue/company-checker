@@ -1,4 +1,5 @@
 import sqlite3
+from sqlite3 import IntegrityError
 
 con = sqlite3.connect("tgbot/models/database.db")
 cur = con.cursor()
@@ -10,15 +11,21 @@ async def add_user(telegram_id, username, fname, lname, rname, number_auto, road
     odometer_back, litre_back)
                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
     data = (telegram_id, username, fname, lname, rname, number_auto, road_list, odometer, odometer_back, litre_back)
-    cur.execute(sql, data)
-    con.commit()
+    try:
+        cur.execute(sql, data)
+        con.commit()
+    except IntegrityError:
+        pass
 
-
-async def get_user():
-    sql = """SELECT * from users"""
-    cur.execute(sql)
-    row = cur.fetchall()
-    return row
+# async def get_user(telegram_id):
+#     sql = """SELECT * from users where telegram_id = ?"""
+#     cur.execute(sql, (telegram_id,))
+#     row = cur.fetchone()
+#     con.commit()
+#     if row:
+#         return True
+#     else:
+#         return False
 
 
 async def update_user(telegram_id, rname):
