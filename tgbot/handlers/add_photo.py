@@ -3,8 +3,10 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 from tgbot.misc.states import Name
 
-
 # Фото выезд.
+from tgbot.models.users import update_info_user
+
+
 async def user_fuel(message: Message):
     await message.answer(f'Датчик фото загружен.\n'
                          f'Загрузите фото авто, вид спереди.')
@@ -38,7 +40,16 @@ async def user_auto_right(message: Message, state: FSMContext):
 
 async def user_fuel_back(message: Message, state: FSMContext):
     await message.answer(f'Успешная загрузка фото на заезд.')
-    await state.reset_state(with_data=False)
+    telegram_id = message.from_user.id
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    road_list = user_data['road_list']
+    odometer = user_data['odometer']
+    odometer_back = user_data['odometer_back']
+    litre_back = user_data['litre_back']
+    await update_info_user(telegram_id=telegram_id, number_auto=number_auto, road_list=road_list, odometer=odometer,
+                           odometer_back=odometer_back, litre_back=litre_back)
+    await state.reset_state(with_data=True)
 
 
 def register_photo(dp: Dispatcher):
