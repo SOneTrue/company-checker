@@ -2,58 +2,70 @@ from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 from tgbot.misc.states import Name
-from tgbot.models.users import get_info_user
+from tgbot.models.users import rname_user
 
 
 # Выезд.
 
 async def user_info(message: Message):
-    data = await get_info_user(telegram_id=message.from_user.id)
+    data = await rname_user(telegram_id=message.from_user.id)
     real_name = ''.join(data)
     await message.answer(f"Ваше имя: {real_name}")
     await message.answer(f'Введите государственный номер авто. транспорта.')
     await Name.send_number_auto.set()
 
 
-async def user_number(message: Message):
+async def user_number(message: Message, state: FSMContext):
     await message.answer(f'Гос. номер введён. \n'
                          f'Введите номер путевого листа')
+    number_auto = message.text
+    await state.update_data(number_auto=number_auto)
     await Name.send_road_list.set()
 
 
-async def user_road_list(message: Message):
+async def user_road_list(message: Message, state: FSMContext):
     await message.answer(f'Путевой лист готов \n'
                          f'Одометр на выезд')
+    road_list = message.text
+    await state.update_data(road_list=road_list)
     await Name.send_odometer.set()
 
 
-async def user_odometer(message: Message):
+async def user_odometer(message: Message, state: FSMContext):
     await message.answer(f'Одометр готов \n'
                          f'Отравьте фото датчика топлива.')
+    odometer = message.text
+    await state.update_data(odometer=odometer)
     await Name.send_fuel.set()
 
 
 # Заезд.
 
 
-async def user_info_back(message: Message):
-    data = await get_info_user(telegram_id=message.from_user.id)
+async def user_info_back(message: Message, state: FSMContext):
+    data = await rname_user(telegram_id=message.from_user.id)
     real_name = ''.join(data)
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
     await message.answer(f"Ваше имя: {real_name}\n"
-                         f"Ваш гос. знак - .\n"
+                         f"Ваш гос. знак - {number_auto}.\n"
                          f"Введите одометр на заезд")
     await Name.send_odometer_back.set()
 
 
-async def user_odometer_back(message: Message):
+async def user_odometer_back(message: Message, state: FSMContext):
     await message.answer(f"Одометр введён.\n"
                          f"Введите одометр на заезд")
+    odometer_back = message.text
+    await state.update_data(odometer_back=odometer_back)
     await Name.send_litre_back.set()
 
 
-async def user_litre_back(message: Message):
+async def user_litre_back(message: Message, state: FSMContext):
     await message.answer(f"Литры на заезд введены.\n"
                          f"Отправьте фото датчика топлива на заезд!")
+    litre_back = message.text
+    await state.update_data(litre_back=litre_back)
     await Name.send_fuel_back.set()
 
 

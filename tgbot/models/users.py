@@ -28,10 +28,15 @@ async def update_user(telegram_id, rname):
     con.commit()
 
 
-async def get_info_user(telegram_id):
+async def rname_user(telegram_id):
     sql = """select rname from users where telegram_id = ?"""
     cur.execute(sql, (telegram_id,))
     params = cur.fetchone()
-    # for row in params:
-    #     return row[5]
     return params
+
+
+async def update_info_user(telegram_id, number_auto, road_list, odometer, odometer_back, litre_back):
+    sql = """Update users set number_auto = ?, road_list = ?, odometer = ?, odometer_back = ?, litre_back = ? where telegram_id = ?"""
+    data = (number_auto, road_list, odometer, odometer_back, litre_back, telegram_id)
+    cur.execute(sql, data)
+    con.commit()
