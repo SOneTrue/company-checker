@@ -2,7 +2,7 @@ from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 from tgbot.misc.states import Name
-from tgbot.models.users import update_user
+from tgbot.models.users import update_user, delete_info
 from tgbot.services.writer_excel import write_info
 
 
@@ -18,10 +18,12 @@ async def add_user_name(message: Message, state: FSMContext):
     await message.answer('Имя добавлено')
     await state.finish()
 
+
 async def user_save(message: Message):
     try:
-        write_info()
+        await write_info()
         await message.answer(f'Good')
+        await delete_info()
     except:
         await message.answer(f'Bad')
 
