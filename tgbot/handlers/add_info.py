@@ -9,10 +9,13 @@ from tgbot.models.users import rname_user
 
 async def user_info(message: Message):
     data = await rname_user(telegram_id=message.from_user.id)
-    real_name = ''.join(data)
-    await message.answer(f"Ваше имя: {real_name}")
-    await message.answer(f'Введите государственный номер авто. транспорта.')
-    await Name.send_number_auto.set()
+    try:
+        real_name = ''.join(data)
+        await message.answer(f"Ваше имя: {real_name}")
+        await message.answer(f'Введите государственный номер авто. транспорта.')
+        await Name.send_number_auto.set()
+    except TypeError:
+        await message.answer(f'Вы не ввели своё реальное имя, начните с начала - /start')
 
 
 async def user_number(message: Message, state: FSMContext):
@@ -44,13 +47,17 @@ async def user_odometer(message: Message, state: FSMContext):
 
 async def user_info_back(message: Message, state: FSMContext):
     data = await rname_user(telegram_id=message.from_user.id)
-    real_name = ''.join(data)
-    user_data = await state.get_data()
-    number_auto = user_data['number_auto']
-    await message.answer(f"Ваше имя: {real_name}\n"
-                         f"Ваш гос. знак - {number_auto}.\n"
-                         f"Введите одометр на заезд")
-    await Name.send_odometer_back.set()
+    try:
+        real_name = ''.join(data)
+        user_data = await state.get_data()
+        number_auto = user_data['number_auto']
+        await message.answer(f"Ваше имя: {real_name}\n"
+                             f"Ваш гос. знак - {number_auto}.\n"
+                             f"Введите одометр на заезд")
+        await Name.send_odometer_back.set()
+    except TypeError:
+        await message.answer('Вы не заполнили информацию на выезд, начните сначала.')
+        await state.reset_state(with_data=True)
 
 
 async def user_odometer_back(message: Message, state: FSMContext):
