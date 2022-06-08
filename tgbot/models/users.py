@@ -7,43 +7,36 @@ cur = con.cursor()
 
 async def add_user(telegram_id, username, fname, lname, rname, number_auto, road_list, odometer, odometer_back,
                    litre_back):
-    sql = """INSERT INTO users(telegram_id, username, fname, lname, rname, number_auto, road_list, odometer, 
-    odometer_back, litre_back)
+    sql = """INSERT INTO users("Телеграм ID", "Пользовательский ник", "Имя", "Фамилия", "Полное имя", "Номер авто", 
+    "Путевой лист", "Одометр выезд", "Одометр заезд", "Литров заезд")
                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
     data = (telegram_id, username, fname, lname, rname, number_auto, road_list, odometer, odometer_back, litre_back)
     try:
         cur.execute(sql, data)
         con.commit()
     except IntegrityError:
+        con.commit()
         pass
-
-# async def get_user(telegram_id):
-#     sql = """SELECT * from users where telegram_id = ?"""
-#     cur.execute(sql, (telegram_id,))
-#     row = cur.fetchone()
-#     con.commit()
-#     if row:
-#         return True
-#     else:
-#         return False
 
 
 async def update_user(telegram_id, rname):
-    sql = """Update users set rname = ? where telegram_id = ?"""
+    sql = """Update users set "Полное имя" = ? where "Телеграм ID" = ?"""
     data = (rname, telegram_id)
     cur.execute(sql, data)
     con.commit()
 
 
 async def rname_user(telegram_id):
-    sql = """select rname from users where telegram_id = ?"""
+    sql = """select "Полное имя" from users where "Телеграм ID" = ?"""
     cur.execute(sql, (telegram_id,))
     params = cur.fetchone()
+    con.commit()
     return params
 
 
 async def update_info_user(telegram_id, number_auto, road_list, odometer, odometer_back, litre_back):
-    sql = """Update users set number_auto = ?, road_list = ?, odometer = ?, odometer_back = ?, litre_back = ? where telegram_id = ?"""
+    sql = """Update users set "Номер авто" = ?, "Путевой лист" = ?, "Одометр выезд" = ?, "Одометр заезд" = ?, 
+    "Литров заезд" = ? where "Телеграм ID" = ?"""
     data = (number_auto, road_list, odometer, odometer_back, litre_back, telegram_id)
     cur.execute(sql, data)
     con.commit()
