@@ -56,7 +56,7 @@ async def user_info_back(message: Message, state: FSMContext):
                              f"Введите одометр на заезд")
         await Name.send_odometer_back.set()
     except TypeError:
-        await message.answer('Вы не заполнили информацию на выезд, начните сначала.')
+        await message.answer('Вы не заполнили информацию о себе, начните сначала - /start')
         await state.reset_state(with_data=True)
 
 
