@@ -1,8 +1,6 @@
 import pandas as pd
 from datetime import date
 
-from aiogram.dispatcher import FSMContext
-
 from tgbot.models.users import con
 
 path = '../info.xlsx'
