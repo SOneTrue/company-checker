@@ -20,12 +20,9 @@ async def add_user_name(message: Message, state: FSMContext):
 
 
 async def user_save(message: Message):
-
     await write_info()
     await message.answer(f'Good')
     await delete_info()
-    # except:
-    #     await message.answer(f'Bad')
 
 
 def register_user(dp: Dispatcher):
