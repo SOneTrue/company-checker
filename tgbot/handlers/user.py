@@ -4,7 +4,7 @@ from aiogram.types import Message
 from tgbot.misc.states import Name
 from tgbot.models.users import update_user, delete_info
 from tgbot.services.writer_excel import write_info
-
+from datetime import date
 
 async def user_start(message: Message):
     await message.answer("Здравствуйте, введите ФИО для дальнейшей работы с ботом")
@@ -20,12 +20,12 @@ async def add_user_name(message: Message, state: FSMContext):
 
 
 async def user_save(message: Message):
-    try:
-        await write_info()
-        await message.answer(f'Good')
-        await delete_info()
-    except:
-        await message.answer(f'Bad')
+
+    await write_info()
+    await message.answer(f'Good')
+    await delete_info()
+    # except:
+    #     await message.answer(f'Bad')
 
 
 def register_user(dp: Dispatcher):
