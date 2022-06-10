@@ -1,6 +1,8 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
+
+from tgbot.misc.form import to_control, docs
 from tgbot.misc.states import Name
 from tgbot.models.users import rname_user
 
@@ -36,9 +38,21 @@ async def user_road_list(message: Message, state: FSMContext):
 
 async def user_odometer(message: Message, state: FSMContext):
     await message.answer(f'Одометр готов \n'
-                         f'Отравьте фото датчика топлива.')
+                         f'Подтвердите что всё исправно или напишите комментарий. \n'
+                         f'{to_control}.')
     odometer = message.text
     await state.update_data(odometer=odometer)
+    await Name.send_to_control.set()
+
+
+async def user_accept_to(message: Message, state: FSMContext):
+    await message.answer(f'Тех. контроль готово. \n'
+                         f'Подтвердите что всё исправно или напишите комментарий. \n'
+                         f'{docs}.')
+    await Name.send_docs.set()
+
+async def user_accept_docs(message: Message, state: FSMContext):
+    await message.answer(f'Успешно заполнены анкеты, пришлите фото датчика топлива')
     await Name.send_fuel.set()
 
 
@@ -81,6 +95,8 @@ def register_info(dp: Dispatcher):
     dp.register_message_handler(user_number, state=Name.send_number_auto)
     dp.register_message_handler(user_road_list, state=Name.send_road_list)
     dp.register_message_handler(user_odometer, state=Name.send_odometer)
+    dp.register_message_handler(user_accept_to, state=Name.send_to_control)
+    dp.register_message_handler(user_accept_docs, state=Name.send_docs)
     dp.register_message_handler(user_info_back, commands=["close"])
     dp.register_message_handler(user_odometer_back, state=Name.send_odometer_back)
     dp.register_message_handler(user_litre_back, state=Name.send_litre_back)
