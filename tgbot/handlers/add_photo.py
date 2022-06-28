@@ -1,15 +1,21 @@
-from aiogram import Dispatcher, types
+from aiogram import Dispatcher, types, Bot
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
+from tgbot.config import load_config
 from tgbot.keyboards.inline import start_close
 from tgbot.misc.states import Name
-
-# Фото выезд.
 from tgbot.models.users import update_info_user
 
+config = load_config(".env")
+bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
 
+
+# Фото выезд.
 async def user_fuel(message: Message):
+    file_id = message.photo[0].file_id
+    group = config.tg_bot.group
+    await bot.send_photo(chat_id=group, photo=file_id)
     await message.answer(f'Датчик фото загружен.\n'
                          f'Загрузите фото авто, вид спереди.')
     await Name.send_auto_front.set()
