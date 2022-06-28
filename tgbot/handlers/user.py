@@ -1,10 +1,12 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
+
+from tgbot.keyboards.inline import start_exit
 from tgbot.misc.states import Name
 from tgbot.models.users import update_user, delete_info
 from tgbot.services.writer_excel import write_info
-from datetime import date
+
 
 async def user_start(message: Message):
     await message.answer("Здравствуйте, введите ФИО для дальнейшей работы с ботом")
@@ -15,8 +17,8 @@ async def add_user_name(message: Message, state: FSMContext):
     telegram_id = message.from_user.id
     rname = message.text
     await update_user(telegram_id=telegram_id, rname=rname)
-    await message.answer('<b>Имя добавлено</b>')
-    await state.finish()
+    await message.answer('<b>Имя добавлено</b>', reply_markup=start_exit)
+    await Name.start_day.set()
 
 
 async def user_save(message: Message):

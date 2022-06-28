@@ -1,7 +1,8 @@
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
+from tgbot.filters.button_filter import Button
 from tgbot.misc.form import to_control, docs
 from tgbot.misc.states import Name
 from tgbot.models.users import rname_user
@@ -9,15 +10,13 @@ from tgbot.models.users import rname_user
 
 # Выезд.
 
-async def user_info(message: Message):
-    data = await rname_user(telegram_id=message.from_user.id)
-    try:
-        real_name = ''.join(data)
-        await message.answer(f"Ваше имя: {real_name}")
-        await message.answer(f'Введите государственный номер авто. транспорта.')
-        await Name.send_number_auto.set()
-    except TypeError:
-        await message.answer(f'Вы не ввели своё реальное имя, начните с начала - /start')
+async def user_info(call: CallbackQuery):
+    telegram_id = call.from_user.id
+    data = await rname_user(telegram_id=telegram_id)
+    real_name = ''.join(data)
+    await call.message.answer(f"Ваше имя: {real_name}")
+    await call.message.answer(f'Введите государственный номер авто. транспорта.')
+    await Name.send_number_auto.set()
 
 
 async def user_number(message: Message, state: FSMContext):
@@ -51,6 +50,7 @@ async def user_accept_to(message: Message, state: FSMContext):
                          f'{docs}.')
     await Name.send_docs.set()
 
+
 async def user_accept_docs(message: Message, state: FSMContext):
     await message.answer(f'Успешно заполнены анкеты, пришлите фото датчика топлива')
     await Name.send_fuel.set()
@@ -76,7 +76,7 @@ async def user_info_back(message: Message, state: FSMContext):
 
 async def user_odometer_back(message: Message, state: FSMContext):
     await message.answer(f"Одометр введён.\n"
-                         f"Введите одометр на заезд")
+                         f"Введите литры на заезд")
     odometer_back = message.text
     await state.update_data(odometer_back=odometer_back)
     await Name.send_litre_back.set()
@@ -91,7 +91,7 @@ async def user_litre_back(message: Message, state: FSMContext):
 
 
 def register_info(dp: Dispatcher):
-    dp.register_message_handler(user_info, commands=["open"])
+    dp.register_callback_query_handler(user_info, Button('exit'), state=Name.start_day)
     dp.register_message_handler(user_number, state=Name.send_number_auto)
     dp.register_message_handler(user_road_list, state=Name.send_road_list)
     dp.register_message_handler(user_odometer, state=Name.send_odometer)
