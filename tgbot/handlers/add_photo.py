@@ -1,6 +1,8 @@
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
+
+from tgbot.keyboards.inline import start_close
 from tgbot.misc.states import Name
 
 # Фото выезд.
@@ -32,7 +34,7 @@ async def user_auto_left(message: Message):
 
 
 async def user_auto_right(message: Message, state: FSMContext):
-    await message.answer(f'Успешная загрузка фото на выезд.')
+    await message.answer(f'Успешная загрузка фото на выезд.', reply_markup=start_close)
     await state.reset_state(with_data=False)
 
 

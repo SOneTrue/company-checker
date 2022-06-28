@@ -11,10 +11,8 @@ from tgbot.models.users import rname_user
 # Выезд.
 
 async def user_info(call: CallbackQuery):
-    # await call.answer(cache_time=60)
     await call.message.edit_reply_markup()
-    telegram_id = call.from_user.id
-    data = await rname_user(telegram_id=telegram_id)
+    data = await rname_user(telegram_id=call.from_user.id)
     real_name = ''.join(data)
     await call.message.answer(f"Ваше имя: {real_name}")
     await call.message.answer(f'Введите государственный номер авто. транспорта.')
@@ -61,19 +59,16 @@ async def user_accept_docs(message: Message, state: FSMContext):
 # Заезд.
 
 
-async def user_info_back(message: Message, state: FSMContext):
-    data = await rname_user(telegram_id=message.from_user.id)
-    try:
-        real_name = ''.join(data)
-        user_data = await state.get_data()
-        number_auto = user_data['number_auto']
-        await message.answer(f"Ваше имя: {real_name}\n"
-                             f"Ваш гос. знак - {number_auto}.\n"
-                             f"Введите одометр на заезд")
-        await Name.send_odometer_back.set()
-    except TypeError:
-        await message.answer('Вы не заполнили информацию о себе, начните сначала - /start')
-        await state.reset_state(with_data=True)
+async def user_info_back(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_reply_markup()
+    data = await rname_user(telegram_id=call.from_user.id)
+    real_name = ''.join(data)
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    await call.message.answer(f"Ваше имя: {real_name}\n"
+                              f"Ваш гос. знак - {number_auto}.\n"
+                              f"Введите одометр на заезд")
+    await Name.send_odometer_back.set()
 
 
 async def user_odometer_back(message: Message, state: FSMContext):
@@ -99,6 +94,6 @@ def register_info(dp: Dispatcher):
     dp.register_message_handler(user_odometer, state=Name.send_odometer)
     dp.register_message_handler(user_accept_to, state=Name.send_to_control)
     dp.register_message_handler(user_accept_docs, state=Name.send_docs)
-    dp.register_message_handler(user_info_back, commands=["close"])
+    dp.register_callback_query_handler(user_info_back, Button('close'))
     dp.register_message_handler(user_odometer_back, state=Name.send_odometer_back)
     dp.register_message_handler(user_litre_back, state=Name.send_litre_back)
