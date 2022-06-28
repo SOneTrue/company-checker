@@ -1,5 +1,9 @@
 from tgbot.filters.settings_buttons import ListOfButtons
 
-accept_keyboard = ListOfButtons(text=['Принять', 'Отказать'],
-                                callback=['accept', 'cancel'],
-                                align=[2]).inline_keyboard
+start_exit = ListOfButtons(text=['Начать раб. день'],
+                           callback=['exit'],
+                           align=[1]).inline_keyboard
+
+start_close = ListOfButtons(text=['Закончить раб. день'],
+                            callback=['close'],
+                            align=[1]).inline_keyboard
