@@ -12,34 +12,56 @@ bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
 
 
 # Фото выезд.
-async def user_fuel(message: Message):
+async def user_fuel(message: Message, state: FSMContext):
     file_id = message.photo[0].file_id
-    group = config.tg_bot.group
-    await bot.send_photo(chat_id=group, photo=file_id)
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    text = f'Гос. номер автомобиля - {number_auto}'
+    await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Датчик фото загружен.\n'
                          f'Загрузите фото авто, вид спереди.')
     await Name.send_auto_front.set()
 
 
-async def user_auto_front(message: Message):
+async def user_auto_front(message: Message, state: FSMContext):
+    file_id = message.photo[0].file_id
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    text = f'Гос. номер автомобиля - {number_auto}'
+    await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Фото авто, вид спереди загружен.\n'
                          f'Загрузите фото авто, вид сзади.')
     await Name.send_auto_back.set()
 
 
-async def user_auto_back(message: Message):
+async def user_auto_back(message: Message, state: FSMContext):
+    file_id = message.photo[0].file_id
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    text = f'Гос. номер автомобиля - {number_auto}'
+    await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Фото авто, вид сзади загружен.\n'
                          f'Загрузите фото авто, вид слева.')
     await Name.send_auto_left.set()
 
 
-async def user_auto_left(message: Message):
+async def user_auto_left(message: Message, state: FSMContext):
+    file_id = message.photo[0].file_id
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    text = f'Гос. номер автомобиля - {number_auto}'
+    await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Фото авто, вид слева загружен.\n'
                          f'Загрузите фото авто, вид справа.')
     await Name.send_auto_right.set()
 
 
 async def user_auto_right(message: Message, state: FSMContext):
+    file_id = message.photo[0].file_id
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    text = f'Гос. номер автомобиля - {number_auto}'
+    await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Успешная загрузка фото на выезд.', reply_markup=start_close)
     await state.reset_state(with_data=False)
 
@@ -47,7 +69,14 @@ async def user_auto_right(message: Message, state: FSMContext):
 # Фото заезд.
 
 async def user_fuel_back(message: Message, state: FSMContext):
+    file_id = message.photo[0].file_id
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    text = f'Гос. номер автомобиля - {number_auto}'
+    await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Успешная загрузка фото на заезд.')
+    text_user = f'Автомобиль - {number_auto}, завершил рейс.'
+    await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
     telegram_id = message.from_user.id
     user_data = await state.get_data()
     number_auto = user_data['number_auto']
