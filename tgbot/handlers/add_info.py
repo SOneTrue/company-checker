@@ -11,6 +11,8 @@ from tgbot.models.users import rname_user
 # Выезд.
 
 async def user_info(call: CallbackQuery):
+    # await call.answer(cache_time=60)
+    await call.message.edit_reply_markup()
     telegram_id = call.from_user.id
     data = await rname_user(telegram_id=telegram_id)
     real_name = ''.join(data)
