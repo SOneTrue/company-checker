@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from tgbot.filters.button_filter import Button
+from tgbot.keyboards.inline import answer_q1, answer_q2
 from tgbot.misc.form import to_control, docs
 from tgbot.misc.states import Name
 from tgbot.models.users import rname_user
@@ -35,10 +36,13 @@ async def user_road_list(message: Message, state: FSMContext):
     await Name.send_odometer.set()
 
 
+"""Чек-листы - начало """
+
+
 async def user_odometer(message: Message, state: FSMContext):
     await message.answer(f'Одометр готов \n'
                          f'Подтвердите что всё исправно или напишите комментарий. \n'
-                         f'{to_control}.')
+                         f'{to_control}.', reply_markup=answer_q1)
     odometer = message.text
     await state.update_data(odometer=odometer)
     await Name.send_to_control.set()
@@ -47,11 +51,14 @@ async def user_odometer(message: Message, state: FSMContext):
 async def user_accept_to(message: Message, state: FSMContext):
     await message.answer(f'Тех. контроль готово. \n'
                          f'Подтвердите что всё исправно или напишите комментарий. \n'
-                         f'{docs}.')
+                         f'{docs}.', reply_markup=answer_q2)
     await Name.send_docs.set()
 
 
-async def user_accept_docs(message: Message, state: FSMContext):
+"""Конец чек-листов"""
+
+
+async def user_accept_docs(message: Message):
     await message.answer(f'Успешно заполнены анкеты, пришлите фото датчика топлива')
     await Name.send_fuel.set()
 
