@@ -1,18 +1,23 @@
-from aiogram import Dispatcher
+from aiogram import Dispatcher, Bot
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 
+from tgbot.config import load_config
 from tgbot.filters.button_filter import Button
-from tgbot.keyboards.inline import answer_q1, answer_q2
+from tgbot.keyboards.reply import answer
 from tgbot.misc.form import to_control, docs
 from tgbot.misc.states import Name
 from tgbot.models.users import rname_user
+
+config = load_config(".env")
+bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
 
 
 # Выезд.
 
 async def user_info(call: CallbackQuery):
     await call.message.edit_reply_markup()
+    await call.message.delete()
     data = await rname_user(telegram_id=call.from_user.id)
     real_name = ''.join(data)
     await call.message.answer(f"Ваше имя: {real_name}")
@@ -40,27 +45,30 @@ async def user_road_list(message: Message, state: FSMContext):
 
 
 async def user_odometer(message: Message, state: FSMContext):
-    await message.answer(f'Одометр готов \n'
-                         f'Подтвердите что всё исправно или напишите комментарий. \n'
-                         f'{to_control}.', reply_markup=answer_q1)
+    await message.answer(f'Подтвердите что всё исправно или напишите комментарий. \n'
+                         f'{to_control} \n'
+                         f'{docs} \n'
+                         f'<b> Если всё верно, нажмите верно, если нет введите комментарий! </b>', reply_markup=answer)
     odometer = message.text
     await state.update_data(odometer=odometer)
-    await Name.send_to_control.set()
+    await Name.send_comment.set()
 
 
-async def user_accept_to(message: Message, state: FSMContext):
-    await message.answer(f'Тех. контроль готово. \n'
-                         f'Подтвердите что всё исправно или напишите комментарий. \n'
-                         f'{docs}.', reply_markup=answer_q2)
-    await Name.send_docs.set()
-
+async def send_comment(message: Message, state: FSMContext):
+    if message.text == 'Верно':
+        await message.answer(f'Успешно заполнены анкеты, пришлите фото датчика топлива')
+        await Name.send_fuel.set()
+    else:
+        data = await rname_user(telegram_id=message.from_user.id)
+        real_name = ''.join(data)
+        user_data = await state.get_data()
+        number_auto = user_data['number_auto']
+        text = f'Пользователь {real_name}, на авто {number_auto}, оставил комментарий - {message.text}'
+        await bot.send_message(chat_id=config.tg_bot.group, text=text)
+        await message.answer(f'Комментарий успешно отправлен!')
+        await Name.send_fuel.set()
 
 """Конец чек-листов"""
-
-
-async def user_accept_docs(message: Message):
-    await message.answer(f'Успешно заполнены анкеты, пришлите фото датчика топлива')
-    await Name.send_fuel.set()
 
 
 # Заезд.
@@ -68,6 +76,7 @@ async def user_accept_docs(message: Message):
 
 async def user_info_back(call: CallbackQuery, state: FSMContext):
     await call.message.edit_reply_markup()
+    await call.message.delete()
     data = await rname_user(telegram_id=call.from_user.id)
     real_name = ''.join(data)
     user_data = await state.get_data()
@@ -99,8 +108,7 @@ def register_info(dp: Dispatcher):
     dp.register_message_handler(user_number, state=Name.send_number_auto)
     dp.register_message_handler(user_road_list, state=Name.send_road_list)
     dp.register_message_handler(user_odometer, state=Name.send_odometer)
-    dp.register_message_handler(user_accept_to, state=Name.send_to_control)
-    dp.register_message_handler(user_accept_docs, state=Name.send_docs)
+    dp.register_message_handler(send_comment, state=Name.send_comment)
     dp.register_callback_query_handler(user_info_back, Button('close'))
     dp.register_message_handler(user_odometer_back, state=Name.send_odometer_back)
     dp.register_message_handler(user_litre_back, state=Name.send_litre_back)

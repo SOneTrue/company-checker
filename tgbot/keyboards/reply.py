@@ -4,3 +4,6 @@ start_default = ListOfButtons(text=['Send'],
                               callback=['sender'],
                               align=[1]).reply_keyboard
 
+answer = ListOfButtons(text=['Верно'],
+                       callback=['good'],
+                       align=[1]).reply_keyboard
