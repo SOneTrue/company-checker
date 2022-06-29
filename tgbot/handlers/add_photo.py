@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
 from tgbot.config import load_config
-from tgbot.keyboards.inline import start_close
+from tgbot.keyboards.inline import start_close, start_exit
 from tgbot.misc.states import Name
 from tgbot.models.users import update_info_user
 
@@ -87,6 +87,8 @@ async def user_fuel_back(message: Message, state: FSMContext):
     await update_info_user(telegram_id=telegram_id, number_auto=number_auto, road_list=road_list, odometer=odometer,
                            odometer_back=odometer_back, litre_back=litre_back)
     await state.reset_state(with_data=True)
+    await message.answer(f'Чтобы начать новый день, нажмите кнопку.', reply_markup=start_exit)
+    await Name.start_day.set()
 
 
 def register_photo(dp: Dispatcher):
