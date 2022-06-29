@@ -8,7 +8,7 @@ class Name(StatesGroup):
     send_number_auto = State()
     send_road_list = State()
     send_odometer = State()
-    send_to_control = State()
+    send_comment = State()
     send_docs = State()
 # Фото выезд
     send_fuel = State()
