@@ -1,9 +1,12 @@
 import asyncio
+import warnings
 
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from loguru import logger
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from pytz_deprecation_shim import PytzUsageWarning
 
 from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
@@ -15,6 +18,7 @@ from tgbot.handlers.add_photo import register_photo
 from tgbot.handlers.echo import register_echo
 from tgbot.middlewares.db import DbMiddleware
 from tgbot.misc.set_bot_commands import set_default_commands
+from tgbot.services.writer_excel import write_info
 
 
 def register_all_middlewares(dp):
@@ -34,6 +38,10 @@ def register_all_handlers(dp):
     register_echo(dp)
 
 
+def set_scheduled_jobs(scheduler, *args, **kwargs):
+    scheduler.add_job(write_info, 'cron', day_of_week='mon-sun', hour=23, minute=00)
+
+
 async def main():
     await setup_logger()
 
@@ -47,6 +55,9 @@ async def main():
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(bot, storage=storage)
 
+    warnings.filterwarnings(action="ignore", category=PytzUsageWarning)
+    scheduler = AsyncIOScheduler()
+
     bot['config'] = config
 
     register_all_middlewares(dp)
@@ -54,8 +65,10 @@ async def main():
     await set_default_commands(dp)
     register_all_handlers(dp)
 
+    set_scheduled_jobs(scheduler)
     # start
     try:
+        scheduler.start()
         await dp.start_polling()
     finally:
         await dp.storage.close()

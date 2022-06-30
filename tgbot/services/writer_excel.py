@@ -16,3 +16,6 @@ async def write_info():
         df = pd.read_sql_query("SELECT * FROM users", con)
         with pd.ExcelWriter(path, engine='openpyxl') as writer:
             df.to_excel(writer, sheet_name=f'{new_date}')
+    except ValueError:
+        pass
+
