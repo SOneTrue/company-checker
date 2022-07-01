@@ -5,20 +5,20 @@ from aiogram.utils.markdown import hcode
 
 async def bot_echo(message: types.Message):
     text = [
-        "Ваши данные не корректны, возможно вы отправили текст, а нужно фото.",
-        f"Сообщение:",
-        message.text
+        f'Введены неверные данные, проверьте: \n'
+        f'Отправлено фото, а необходимо текст. \n'
+        f'Отправлен текст, а необходимо фото.'
     ]
+
 
     await message.answer('\n'.join(text))
 
 
 async def bot_echo_all(message: types.Message, state: FSMContext):
-    state = await state.get_state()
     text = [
-        f'Ваши данные не корректны, возможно вы отправили текст, а нужно фото.',
-        f'Содержание сообщения:',
-        hcode(state)
+        f'Введены неверные данные, проверьте: \n'
+        f'Отправлено фото, а необходимо текст. \n'
+        f'Отправлен текст, а необходимо фото.'
     ]
     await message.answer('\n'.join(text))
 

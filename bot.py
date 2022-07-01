@@ -39,7 +39,7 @@ def register_all_handlers(dp):
 
 
 def set_scheduled_jobs(scheduler, *args, **kwargs):
-    scheduler.add_job(write_info, 'cron', day_of_week='mon-sun', hour=23, minute=00)
+    scheduler.add_job(write_info, 'cron', day_of_week='mon-sun', hour=23, minute=58)
 
 
 async def main():
