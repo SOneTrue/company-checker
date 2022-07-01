@@ -19,7 +19,7 @@ async def user_fuel(message: Message, state: FSMContext):
     text = f'Гос. номер автомобиля - {number_auto}'
     await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Фото датчика топлива загружен.\n'
-                         f'Загрузите фото авто, <b> вид спереди. </b>')
+                         f'Загрузите фото авто, <b>вид спереди.</b>')
     await Name.send_auto_front.set()
 
 
@@ -30,7 +30,7 @@ async def user_auto_front(message: Message, state: FSMContext):
     text = f'Гос. номер автомобиля - {number_auto}'
     await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Фото авто, вид спереди загружен.\n'
-                         f'Загрузите фото авто, <b> вид сзади. </b>')
+                         f'Загрузите фото авто, <b>вид сзади.</b>')
     await Name.send_auto_back.set()
 
 
@@ -41,7 +41,7 @@ async def user_auto_back(message: Message, state: FSMContext):
     text = f'Гос. номер автомобиля - {number_auto}'
     await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Фото авто, вид сзади загружен.\n'
-                         f'Загрузите фото авто, <b> вид слева. </b>')
+                         f'Загрузите фото авто, <b>вид слева.</b>')
     await Name.send_auto_left.set()
 
 
@@ -52,7 +52,7 @@ async def user_auto_left(message: Message, state: FSMContext):
     text = f'Гос. номер автомобиля - {number_auto}'
     await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(f'Фото авто, вид слева загружен.\n'
-                         f'Загрузите фото авто, <b> вид справа. </b>')
+                         f'Загрузите фото авто, <b>вид справа.</b>')
     await Name.send_auto_right.set()
 
 

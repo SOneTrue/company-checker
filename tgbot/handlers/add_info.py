@@ -67,7 +67,7 @@ async def send_comment(message: Message, state: FSMContext):
         text = f'Пользователь {real_name}, на авто {number_auto}, оставил комментарий - {message.text}'
         await bot.send_message(chat_id=config.tg_bot.group, text=text)
         await message.answer(f'Комментарий успешно отправлен! \n'
-                             f'Отправьте <b> фото датчика топлива </b>.')
+                             f'Отправьте <b>фото датчика топлива.</b>')
         await Name.send_fuel.set()
 
 
@@ -100,7 +100,7 @@ async def user_odometer_back(message: Message, state: FSMContext):
 
 async def user_litre_back(message: Message, state: FSMContext):
     await message.answer(f"Литры заполнены.\n"
-                         f"Отправьте фото <b> датчика топлива </b> на заезд!")
+                         f"Отправьте фото <b>датчика топлива</b> на заезд!")
     litre_back = message.text
     await state.update_data(litre_back=litre_back)
     await Name.send_fuel_back.set()
