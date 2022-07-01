@@ -9,7 +9,7 @@ from tgbot.services.writer_excel import write_info
 
 
 async def user_start(message: Message):
-    await message.answer("Здравствуйте, введите ФИО для дальнейшей работы с ботом")
+    await message.answer("Здравствуйте, введите Фамилию, Имя и Отчество для дальнейшей работы.")
     await Name.send_name.set()
 
 
@@ -23,7 +23,7 @@ async def add_user_name(message: Message, state: FSMContext):
 
 async def user_save(message: Message):
     await write_info()
-    await message.answer(f'Good')
+    await message.answer(f'Успешное сохранение!')
     await delete_info()
 
 
