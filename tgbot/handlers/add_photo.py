@@ -62,7 +62,7 @@ async def user_auto_right(message: Message, state: FSMContext):
     number_auto = user_data['number_auto']
     text = f'Гос. номер автомобиля - {number_auto}'
     await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
-    await message.answer(f'Успешная загрузка фото на выезд.', reply_markup=start_close)
+    await message.answer(f'Благодарим за заполнение отчета, хорошего дня!', reply_markup=start_close)
     await state.reset_state(with_data=False)
 
 
@@ -74,7 +74,7 @@ async def user_fuel_back(message: Message, state: FSMContext):
     number_auto = user_data['number_auto']
     text = f'Гос. номер автомобиля - {number_auto}'
     await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
-    await message.answer(f'Успешная загрузка фото на заезд.')
+    await message.answer(f'Благодарим за заполнения отчета, хорошего отдыха!')
     text_user = f'Автомобиль - {number_auto}, завершил рейс.'
     await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
     telegram_id = message.from_user.id

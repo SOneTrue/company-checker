@@ -6,8 +6,7 @@ from aiogram.utils.markdown import hcode
 async def bot_echo(message: types.Message):
     text = [
         f'Введены неверные данные, проверьте: \n'
-        f'Отправлено фото, а необходимо текст. \n'
-        f'Отправлен текст, а необходимо фото.'
+        f'Возможно отправлен текст, а не фотография.'
     ]
 
 
@@ -17,8 +16,7 @@ async def bot_echo(message: types.Message):
 async def bot_echo_all(message: types.Message, state: FSMContext):
     text = [
         f'Введены неверные данные, проверьте: \n'
-        f'Отправлено фото, а необходимо текст. \n'
-        f'Отправлен текст, а необходимо фото.'
+        f'Возможно отправлен текст, а не фотография.'
     ]
     await message.answer('\n'.join(text))
 

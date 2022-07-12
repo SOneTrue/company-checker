@@ -17,13 +17,13 @@ async def add_user_name(message: Message, state: FSMContext):
     telegram_id = message.from_user.id
     rname = message.text
     await update_user(telegram_id=telegram_id, rname=rname)
-    await message.answer('<b>Имя добавлено</b>', reply_markup=start_exit)
+    await message.answer('<b>ФИО успешно добавлено, нажмите кнопку чтобы начать заполнение информации! </b>', reply_markup=start_exit)
     await Name.start_day.set()
 
 
 async def user_save(message: Message):
     await write_info()
-    await message.answer(f'Успешное сохранение!')
+    await message.answer(f'Успешное сохранение таблицы в Excel!')
     await delete_info()
 
 

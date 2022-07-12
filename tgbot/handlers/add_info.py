@@ -1,4 +1,4 @@
-from aiogram import Dispatcher, Bot
+from aiogram import Dispatcher, Bot, types
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 
@@ -57,9 +57,11 @@ async def user_odometer(message: Message, state: FSMContext):
 
 async def send_comment(message: Message, state: FSMContext):
     if message.text == 'Верно':
-        await message.answer(f'Успешно заполнены анкеты, отправьте фото датчика топлива.')
+        reply_markup = types.ReplyKeyboardRemove()
+        await message.answer(f'Успешно заполнены анкеты, отправьте фото датчика топлива.', reply_markup=reply_markup)
         await Name.send_fuel.set()
     else:
+        reply_markup = types.ReplyKeyboardRemove()
         data = await rname_user(telegram_id=message.from_user.id)
         real_name = ''.join(data)
         user_data = await state.get_data()
@@ -67,7 +69,7 @@ async def send_comment(message: Message, state: FSMContext):
         text = f'Пользователь {real_name}, на авто {number_auto}, оставил комментарий - {message.text}'
         await bot.send_message(chat_id=config.tg_bot.group, text=text)
         await message.answer(f'Комментарий успешно отправлен! \n'
-                             f'Отправьте <b>фото датчика топлива.</b>')
+                             f'Отправьте <b>фото датчика топлива.</b>', reply_markup=reply_markup)
         await Name.send_fuel.set()
 
 
