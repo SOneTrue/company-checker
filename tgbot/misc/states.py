@@ -21,3 +21,4 @@ class Name(StatesGroup):
     send_litre_back = State()
 # Фото заезд
     send_fuel_back = State()
+    new_day = State()

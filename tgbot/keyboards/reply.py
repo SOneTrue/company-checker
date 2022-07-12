@@ -7,3 +7,7 @@ start_default = ListOfButtons(text=['Send'],
 answer = ListOfButtons(text=['Верно'],
                        callback=['good'],
                        align=[1]).reply_keyboard
+
+answer_day = ListOfButtons(text=['Нет'],
+                       callback=['no'],
+                       align=[1]).reply_keyboard
