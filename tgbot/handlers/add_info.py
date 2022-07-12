@@ -4,7 +4,7 @@ from aiogram.types import Message, CallbackQuery
 
 from tgbot.config import load_config
 from tgbot.filters.button_filter import Button
-from tgbot.keyboards.reply import answer
+from tgbot.keyboards.reply import answer, number_auto_key
 from tgbot.misc.form import to_control, docs
 from tgbot.misc.states import Name
 from tgbot.models.users import rname_user
@@ -21,13 +21,14 @@ async def user_info(call: CallbackQuery):
     data = await rname_user(telegram_id=call.from_user.id)
     real_name = ''.join(data)
     await call.message.answer(f"Ваше имя: {real_name}")
-    await call.message.answer(f'Введите государственный номер авто. транспорта.')
+    await call.message.answer(f'Выберите государственный номер авто. транспорта.', reply_markup=number_auto_key)
     await Name.send_number_auto.set()
 
 
 async def user_number(message: Message, state: FSMContext):
+    reply_markup = types.ReplyKeyboardRemove()
     await message.answer(f'Гос. номер заполнен. \n'
-                         f'Введите номер путевого листа.')
+                         f'Введите номер путевого листа.', reply_markup=reply_markup)
     number_auto = message.text
     await state.update_data(number_auto=number_auto)
     await Name.send_road_list.set()
