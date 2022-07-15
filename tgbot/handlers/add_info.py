@@ -53,6 +53,13 @@ async def user_odometer(message: Message, state: FSMContext):
                          reply_markup=answer)
     odometer = message.text
     await state.update_data(odometer=odometer)
+    data = await rname_user(telegram_id=message.from_user.id)
+    real_name = ''.join(data)
+    user_data = await state.get_data()
+    number_auto = user_data['number_auto']
+    road_list = user_data['road_list']
+    text_user = f'{real_name} начал рейс на автомобиле {number_auto}, путевой номер {road_list}, одометр на выезд {odometer}'
+    await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
     await Name.send_comment.set()
 
 

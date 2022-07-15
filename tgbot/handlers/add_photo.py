@@ -76,10 +76,10 @@ async def user_fuel_back(message: Message, state: FSMContext):
     text = f'Гос. номер автомобиля - {number_auto}'
     await bot.send_photo(chat_id=config.tg_bot.group, photo=file_id, caption=text)
     await message.answer(
-        f'Оставьте комментарий, если были выявлены неисправности в течении дня ил на жмите кнопку "Нет".',
+        f'Оставьте комментарий, если были выявлены неисправности в течении дня или нажмите кнопку "Нет".',
         reply_markup=answer_day)
-    text_user = f'Автомобиль - {number_auto}, завершил рейс.'
-    await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
+    data = await rname_user(telegram_id=message.from_user.id)
+    real_name = ''.join(data)
     telegram_id = message.from_user.id
     user_data = await state.get_data()
     number_auto = user_data['number_auto']
@@ -87,9 +87,13 @@ async def user_fuel_back(message: Message, state: FSMContext):
     odometer = user_data['odometer']
     odometer_back = user_data['odometer_back']
     litre_back = user_data['litre_back']
+    text_user = f'{real_name} закончил рейс на автомобиле {number_auto}, путевой номер {road_list}, одометр на заезд ' \
+                f'{odometer}, количество литров - {litre_back}'
+    await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
     await update_info_user(telegram_id=telegram_id, number_auto=number_auto, road_list=road_list, odometer=odometer,
                            odometer_back=odometer_back, litre_back=litre_back)
     await Name.new_day.set()
+
 
 async def new_day(message: Message, state: FSMContext):
     if message.text == 'Нет':
@@ -102,7 +106,7 @@ async def new_day(message: Message, state: FSMContext):
         real_name = ''.join(data)
         user_data = await state.get_data()
         number_auto = user_data['number_auto']
-        text = f'Пользователь {real_name}, на авто {number_auto}, оставил комментарий по завершению дня - {message.text}'
+        text = f'{real_name}, на автомобиле {number_auto}, оставил комментарий по завершению дня - {message.text}'
         await bot.send_message(chat_id=config.tg_bot.group, text=text)
         await message.answer(f'Комментарий успешно отправлен! \n'
                              f'Благодарим за заполнения отчета, хорошего отдыха!', reply_markup=reply_markup)
