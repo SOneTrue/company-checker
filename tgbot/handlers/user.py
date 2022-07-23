@@ -17,7 +17,8 @@ async def add_user_name(message: Message, state: FSMContext):
     telegram_id = message.from_user.id
     rname = message.text
     await update_user(telegram_id=telegram_id, rname=rname)
-    await message.answer('<b>ФИО успешно добавлено, нажмите кнопку чтобы начать заполнение информации! </b>', reply_markup=start_exit)
+    await message.answer('<b>ФИО успешно добавлено, нажмите кнопку чтобы начать заполнение информации! </b>',
+                         reply_markup=start_exit)
     await Name.start_day.set()
 
 

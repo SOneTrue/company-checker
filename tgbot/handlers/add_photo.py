@@ -99,7 +99,6 @@ async def new_day(message: Message, state: FSMContext):
     if message.text == 'Нет':
         reply_markup = types.ReplyKeyboardRemove()
         await message.answer(f'Благодарим за заполнения отчета, хорошего отдыха!', reply_markup=reply_markup)
-        await Name.send_fuel.set()
     else:
         reply_markup = types.ReplyKeyboardRemove()
         data = await rname_user(telegram_id=message.from_user.id)
@@ -110,9 +109,8 @@ async def new_day(message: Message, state: FSMContext):
         await bot.send_message(chat_id=config.tg_bot.group, text=text)
         await message.answer(f'Комментарий успешно отправлен! \n'
                              f'Благодарим за заполнения отчета, хорошего отдыха!', reply_markup=reply_markup)
-    await message.answer(f'Чтобы начать новый день, нажмите кнопку.', reply_markup=start_exit)
+    await message.answer(f'Чтобы начать новый день нажмите на --> /start')
     await state.reset_state(with_data=True)
-    await Name.start_day.set()
 
 
 def register_photo(dp: Dispatcher):
