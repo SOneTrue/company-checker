@@ -27,7 +27,7 @@ async def user_info(call: CallbackQuery):
 
 async def user_number(message: Message, state: FSMContext):
     reply_markup = types.ReplyKeyboardRemove()
-    await message.answer(f'Гос. номер заполнен. \n'
+    await message.answer(f'✅ Гос. номер заполнен. \n'
                          f'Введите номер путевого листа.', reply_markup=reply_markup)
     number_auto = message.text
     await state.update_data(number_auto=number_auto)
@@ -35,7 +35,7 @@ async def user_number(message: Message, state: FSMContext):
 
 
 async def user_road_list(message: Message, state: FSMContext):
-    await message.answer(f'Путевой лист заполнен. \n'
+    await message.answer(f'✅ Путевой лист заполнен. \n'
                          f'Введите одометр на выезд.')
     road_list = message.text
     await state.update_data(road_list=road_list)
@@ -68,7 +68,7 @@ async def send_comment(message: Message, state: FSMContext):
                     f'одометр на выезд {odometer}, комментариев нет.'
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         reply_markup = types.ReplyKeyboardRemove()
-        await message.answer(f'Успешно заполнены анкеты, отправьте <b>фото датчика топлива.</b>',
+        await message.answer(f'✅ Успешно заполнены анкеты, отправьте <b>фото датчика топлива.</b>',
                              reply_markup=reply_markup)
         await Name.send_fuel.set()
     else:
@@ -76,7 +76,7 @@ async def send_comment(message: Message, state: FSMContext):
         text_user = f'{real_name} начал рейс на автомобиле {number_auto}, путевой номер {road_list}, ' \
                     f'одометр на выезд {odometer}, комментарий {message.text}.'
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
-        await message.answer(f'Комментарий успешно отправлен! \n'
+        await message.answer(f'✅ Комментарий успешно отправлен! \n'
                              f'Отправьте <b>фото датчика топлива.</b>', reply_markup=reply_markup)
         await Name.send_fuel.set()
 
@@ -101,7 +101,7 @@ async def user_info_back(call: CallbackQuery, state: FSMContext):
 
 
 async def user_odometer_back(message: Message, state: FSMContext):
-    await message.answer(f"Одометр заполнен.\n"
+    await message.answer(f"✅ Одометр заполнен.\n"
                          f"Количество заправленого топлива в литрах.")
     odometer_back = message.text
     await state.update_data(odometer_back=odometer_back)
@@ -109,7 +109,7 @@ async def user_odometer_back(message: Message, state: FSMContext):
 
 
 async def user_litre_back(message: Message, state: FSMContext):
-    await message.answer(f"Литры заполнены.\n"
+    await message.answer(f"✅ Литры заполнены.\n"
                          f"Отправьте фото <b>датчика топлива</b> на заезд!")
     litre_back = message.text
     await state.update_data(litre_back=litre_back)

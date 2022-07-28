@@ -16,7 +16,7 @@ bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
 async def user_fuel(message: Message, state: FSMContext):
     photo_one = message.photo[0].file_id
     await state.update_data(photo_one=photo_one)
-    await message.answer(f'Фото датчика топлива загружен.\n'
+    await message.answer(f'✅ Фото датчика топлива загружен.\n'
                          f'Загрузите фото авто, <b>вид спереди.</b>')
     await Name.send_auto_front.set()
 
@@ -24,7 +24,7 @@ async def user_fuel(message: Message, state: FSMContext):
 async def user_auto_front(message: Message, state: FSMContext):
     photo_two = message.photo[0].file_id
     await state.update_data(photo_two=photo_two)
-    await message.answer(f'Фото авто, вид спереди загружен.\n'
+    await message.answer(f'✅ Фото авто, вид спереди загружен.\n'
                          f'Загрузите фото авто, <b>вид сзади.</b>')
     await Name.send_auto_back.set()
 
@@ -32,7 +32,7 @@ async def user_auto_front(message: Message, state: FSMContext):
 async def user_auto_back(message: Message, state: FSMContext):
     photo_three = message.photo[0].file_id
     await state.update_data(photo_three=photo_three)
-    await message.answer(f'Фото авто, вид сзади загружен.\n'
+    await message.answer(f'✅ Фото авто, вид сзади загружен.\n'
                          f'Загрузите фото авто, <b>вид слева.</b>')
     await Name.send_auto_left.set()
 
@@ -40,7 +40,7 @@ async def user_auto_back(message: Message, state: FSMContext):
 async def user_auto_left(message: Message, state: FSMContext):
     photo_four = message.photo[0].file_id
     await state.update_data(photo_four=photo_four)
-    await message.answer(f'Фото авто, вид слева загружен.\n'
+    await message.answer(f'✅ Фото авто, вид слева загружен.\n'
                          f'Загрузите фото авто, <b>вид справа.</b>')
     await Name.send_auto_right.set()
 
@@ -48,7 +48,7 @@ async def user_auto_left(message: Message, state: FSMContext):
 async def user_auto_right(message: Message, state: FSMContext):
     photo_five = message.photo[0].file_id
     await state.update_data(photo_five=photo_five)
-    await message.answer(f'Благодарим за заполнение отчета, хорошего дня!', reply_markup=start_close)
+    await message.answer(f'✅ Благодарим за заполнение отчета, хорошего дня!', reply_markup=start_close)
     await state.reset_state(with_data=False)
 
 
@@ -99,7 +99,7 @@ async def new_day(message: Message, state: FSMContext):
     if message.text == 'Нет':
         reply_markup = types.ReplyKeyboardRemove()
         await bot.send_media_group(chat_id=config.tg_bot.group, media=album)
-        text = f'Комментарий успешно отправлен! \n' \
+        text = f'✅ Комментарий успешно отправлен! \n' \
                f'Благодарим за заполнения отчета, хорошего отдыха! \n' \
                f'Чтобы начать новый день нажмите на --> /start'
         await message.answer(text=text, reply_markup=reply_markup)
@@ -108,7 +108,7 @@ async def new_day(message: Message, state: FSMContext):
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
     else:
         reply_markup = types.ReplyKeyboardRemove()
-        text = f'Комментарий успешно отправлен! \n' \
+        text = f'✅ Комментарий успешно отправлен! \n' \
                f'Благодарим за заполнения отчета, хорошего отдыха! \n' \
                f'Чтобы начать новый день нажмите на --> /start'
         await message.answer(text=text, reply_markup=reply_markup)
