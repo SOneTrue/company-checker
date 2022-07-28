@@ -3,10 +3,10 @@ from aiogram.dispatcher import FSMContext
 from aiogram.utils.markdown import hcode
 
 
-async def bot_echo(message: types.Message):
+async def bot_echo(message: types.Message, state: FSMContext):
+    await state.reset_state(with_data=False)
     text = [
-        f'Введены неверные данные, проверьте: \n'
-        f'Возможно отправлен текст, а не фотография.'
+        f'⛔️ Введены неверные данные, начните с начала --> /start ⚙️'
     ]
 
 
@@ -14,9 +14,9 @@ async def bot_echo(message: types.Message):
 
 
 async def bot_echo_all(message: types.Message, state: FSMContext):
+    await state.reset_state(with_data=False)
     text = [
-        f'Введены неверные данные, проверьте: \n'
-        f'Возможно отправлен текст, а не фотография.'
+        f'⛔️ Введены неверные данные, начните с начала --> /start ⚙️'
     ]
     await message.answer('\n'.join(text))
 
