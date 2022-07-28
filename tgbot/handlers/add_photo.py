@@ -5,6 +5,7 @@ from aiogram.types import Message, MediaGroup
 from tgbot.config import load_config
 from tgbot.keyboards.inline import start_close
 from tgbot.keyboards.reply import answer_day
+from tgbot.misc.album import make_album
 from tgbot.misc.states import Name
 from tgbot.models.users import update_info_user, rname_user
 
@@ -74,7 +75,6 @@ async def user_fuel_back(message: Message, state: FSMContext):
 
 async def new_day(message: Message, state: FSMContext):
     # Формирование альбома.
-    album = MediaGroup()
     user_data = await state.get_data()
     photo_one = user_data['photo_one']
     photo_two = user_data['photo_two']
@@ -82,12 +82,7 @@ async def new_day(message: Message, state: FSMContext):
     photo_four = user_data['photo_four']
     photo_five = user_data['photo_five']
     photo_six = user_data['photo_six']
-    album.attach_photo(photo_one)
-    album.attach_photo(photo_two)
-    album.attach_photo(photo_three)
-    album.attach_photo(photo_four)
-    album.attach_photo(photo_five)
-    album.attach_photo(photo_six)
+    album = await make_album(photo_one, photo_two, photo_three, photo_four, photo_five, photo_six)
     # Текст с данными.
     data = await rname_user(telegram_id=message.from_user.id)
     real_name = ''.join(data)
