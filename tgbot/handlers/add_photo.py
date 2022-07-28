@@ -77,7 +77,7 @@ async def new_day(message: Message, state: FSMContext):
     album = MediaGroup()
     user_data = await state.get_data()
     photo_one = user_data['photo_one']
-    photo_two = user_data['photo_one']
+    photo_two = user_data['photo_two']
     photo_three = user_data['photo_three']
     photo_four = user_data['photo_four']
     photo_five = user_data['photo_five']
