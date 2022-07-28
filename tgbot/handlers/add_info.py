@@ -53,29 +53,29 @@ async def user_odometer(message: Message, state: FSMContext):
                          reply_markup=answer)
     odometer = message.text
     await state.update_data(odometer=odometer)
+    await Name.send_comment.set()
+
+
+async def send_comment(message: Message, state: FSMContext):
     data = await rname_user(telegram_id=message.from_user.id)
     real_name = ''.join(data)
     user_data = await state.get_data()
     number_auto = user_data['number_auto']
     road_list = user_data['road_list']
-    text_user = f'{real_name} начал рейс на автомобиле {number_auto}, путевой номер {road_list}, одометр на выезд {odometer}'
-    await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
-    await Name.send_comment.set()
-
-
-async def send_comment(message: Message, state: FSMContext):
+    odometer = user_data['odometer']
     if message.text == 'Верно':
+        text_user = f'{real_name} начал рейс на автомобиле {number_auto}, путевой номер {road_list}, ' \
+                    f'одометр на выезд {odometer}, комментариев нет.'
+        await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         reply_markup = types.ReplyKeyboardRemove()
-        await message.answer(f'Успешно заполнены анкеты, отправьте фото датчика топлива.', reply_markup=reply_markup)
+        await message.answer(f'Успешно заполнены анкеты, отправьте <b>фото датчика топлива.</b>',
+                             reply_markup=reply_markup)
         await Name.send_fuel.set()
     else:
         reply_markup = types.ReplyKeyboardRemove()
-        data = await rname_user(telegram_id=message.from_user.id)
-        real_name = ''.join(data)
-        user_data = await state.get_data()
-        number_auto = user_data['number_auto']
-        text = f'Пользователь {real_name}, на авто {number_auto}, оставил комментарий - {message.text}'
-        await bot.send_message(chat_id=config.tg_bot.group, text=text)
+        text_user = f'{real_name} начал рейс на автомобиле {number_auto}, путевой номер {road_list}, ' \
+                    f'одометр на выезд {odometer}, комментарий {message.text}.'
+        await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         await message.answer(f'Комментарий успешно отправлен! \n'
                              f'Отправьте <b>фото датчика топлива.</b>', reply_markup=reply_markup)
         await Name.send_fuel.set()
