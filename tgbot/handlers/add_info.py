@@ -4,6 +4,7 @@ from aiogram.types import Message, CallbackQuery
 
 from tgbot.config import load_config
 from tgbot.filters.button_filter import Button
+from tgbot.keyboards.inline import start_close
 from tgbot.keyboards.reply import answer, number_auto_key
 from tgbot.misc.form import to_control, docs
 from tgbot.misc.states import Name
@@ -27,6 +28,7 @@ async def user_info(call: CallbackQuery):
     else:
         await call.message.answer("Вы начали заново - введите Фамилию, Имя и Отчество для дальнейшей работы.")
         await Name.send_name.set()
+
 
 async def user_number(message: Message, state: FSMContext):
     if not message.text == '/start':
@@ -76,6 +78,8 @@ async def send_comment(message: Message, state: FSMContext):
         reply_markup = types.ReplyKeyboardRemove()
         await message.answer(f'✅ Успешно заполнены анкеты, отправьте <b>фото датчика топлива.</b>',
                              reply_markup=reply_markup)
+        comments_user = 'нет'
+        await state.update_data(comments_user=comments_user)
         await Name.send_fuel.set()
     elif message.text and message.text != '/start':
         reply_markup = types.ReplyKeyboardRemove()
@@ -109,27 +113,27 @@ async def user_info_back(call: CallbackQuery, state: FSMContext):
 
 
 async def user_odometer_back(message: Message, state: FSMContext):
-    if not message.text == '/start':
+    if not message.text == '/edit':
         await message.answer(f"✅Одометр заполнен.\n"
                              f"Количество заправленого топлива в литрах.")
         odometer_back = message.text
         await state.update_data(odometer_back=odometer_back)
         await Name.send_litre_back.set()
     else:
-        await message.answer("Вы начали заново - введите Фамилию, Имя и Отчество для дальнейшей работы.")
-        await Name.send_name.set()
+        await message.answer(f'Чтобы поменять данные вечер, нажмите кнопку!', reply_markup=start_close)
+        await state.reset_state(with_data=False)
 
 
 async def user_litre_back(message: Message, state: FSMContext):
-    if not message.text == '/start':
+    if not message.text == '/edit':
         await message.answer(f"✅Литры заполнены.\n"
                              f"Отправьте фото <b>датчика топлива</b> на заезд!")
         litre_back = message.text
         await state.update_data(litre_back=litre_back)
         await Name.send_fuel_back.set()
     else:
-        await message.answer("Вы начали заново - введите Фамилию, Имя и Отчество для дальнейшей работы.")
-        await Name.send_name.set()
+        await message.answer(f'Чтобы поменять данные вечер, нажмите кнопку!', reply_markup=start_close)
+        await state.reset_state(with_data=False)
 
 
 def register_info(dp: Dispatcher):
