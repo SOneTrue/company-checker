@@ -8,18 +8,23 @@ from tgbot.models.users import update_user, delete_info
 from tgbot.services.writer_excel import write_info
 
 
-async def user_start(message: Message):
+async def user_start(message: Message, state: FSMContext):
+    await state.reset_state(with_data=True)
     await message.answer("Здравствуйте, введите Фамилию, Имя и Отчество для дальнейшей работы.")
     await Name.send_name.set()
 
 
 async def add_user_name(message: Message, state: FSMContext):
-    telegram_id = message.from_user.id
-    rname = message.text
-    await update_user(telegram_id=telegram_id, rname=rname)
-    await message.answer('<b>✅ ФИО успешно добавлено, нажмите кнопку чтобы начать заполнение информации! </b>',
-                         reply_markup=start_exit)
-    await Name.start_day.set()
+    if not message.text == '/start':
+        telegram_id = message.from_user.id
+        rname = message.text
+        await update_user(telegram_id=telegram_id, rname=rname)
+        await message.answer('<b>✅ ФИО успешно добавлено, нажмите кнопку чтобы начать заполнение информации! </b>',
+                             reply_markup=start_exit)
+        await Name.start_day.set()
+    else:
+        await message.answer("⛔️Не верное имя или неправильно заполнено поле, повторите ввод ФИО!")
+        await Name.send_name.set()
 
 
 async def user_save(message: Message):

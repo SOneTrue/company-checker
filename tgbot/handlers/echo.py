@@ -4,7 +4,6 @@ from aiogram.utils.markdown import hcode
 
 
 async def bot_echo(message: types.Message, state: FSMContext):
-    await state.reset_state(with_data=False)
     text = [
         f'⛔️ Введены неверные данные, перепроверьте что требуется отправить, текст или фотографию!\n'
         f'Для того что бы начать сначала нажмите ➡️ /start ⚙️'
@@ -14,7 +13,6 @@ async def bot_echo(message: types.Message, state: FSMContext):
 
 
 async def bot_echo_all(message: types.Message, state: FSMContext):
-    await state.reset_state(with_data=False)
     text = [
         f'⛔️ Введены неверные данные, перепроверьте что требуется отправить, текст или фотографию!\n'
         f'Для того что бы начать сначала нажмите ➡️ /start ⚙️'
