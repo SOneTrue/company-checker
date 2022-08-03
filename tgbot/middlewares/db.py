@@ -11,8 +11,12 @@ class DbMiddleware(LifetimeControllerMiddleware):
 
     async def pre_process(self, obj, data, *args):
         telegram_user: types.User = obj.from_user
+        try:
+            username = telegram_user.username
+        except:
+            username = None
         user = await add_user(telegram_user.id,
-                              username=telegram_user.username,
+                              username=username,
                               fname=telegram_user.first_name,
                               lname=telegram_user.last_name,
                               rname=None,
