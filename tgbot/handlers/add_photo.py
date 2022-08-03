@@ -7,7 +7,7 @@ from tgbot.handlers.add_info import user_info_back
 from tgbot.keyboards.reply import answer_day
 from tgbot.misc.album import make_album
 from tgbot.misc.states import Name
-from tgbot.models.users import update_info_user, rname_user
+from tgbot.models.users import update_info_user
 
 config = load_config(".env")
 bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
@@ -65,9 +65,8 @@ async def user_auto_left(message: Message, state: FSMContext):
 
 
 async def user_auto_right(message: Message, state: FSMContext):
-    data = await rname_user(telegram_id=message.from_user.id)
-    real_name = ''.join(data)
     user_data = await state.get_data()
+    real_name = user_data['real_name']
     number_auto = user_data['number_auto']
     road_list = user_data['road_list']
     odometer = user_data['odometer']
@@ -100,12 +99,14 @@ async def user_fuel_back(message: Message, state: FSMContext):
             reply_markup=answer_day)
         telegram_id = message.from_user.id
         user_data = await state.get_data()
+        real_name = user_data['real_name']
         number_auto = user_data['number_auto']
         road_list = user_data['road_list']
         odometer = user_data['odometer']
         odometer_back = user_data['odometer_back']
         litre_back = user_data['litre_back']
-        await update_info_user(telegram_id=telegram_id, number_auto=number_auto, road_list=road_list, odometer=odometer,
+        await update_info_user(telegram_id=telegram_id, real_name=real_name, number_auto=number_auto,
+                               road_list=road_list, odometer=odometer,
                                odometer_back=odometer_back, litre_back=litre_back)
         await Name.new_day.set()
 

@@ -6,7 +6,6 @@ from tgbot.config import load_config
 from tgbot.keyboards.reply import answer, number_auto_key
 from tgbot.misc.form import to_control, docs
 from tgbot.misc.states import Name
-from tgbot.models.users import rname_user
 
 config = load_config(".env")
 bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
@@ -14,10 +13,10 @@ bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
 
 # Выезд.
 
-async def user_info(message: Message):
+async def user_info(message: Message, state: FSMContext):
     if message.text == '/morning' and message.text != '/start':
-        data = await rname_user(telegram_id=message.from_user.id)
-        real_name = ''.join(data)
+        user_data = await state.get_data()
+        real_name = user_data['real_name']
         await message.answer(f"Ваше имя: {real_name}")
         await message.answer(f'Выберите государственный номер авто. транспорта.', reply_markup=number_auto_key)
         await Name.send_number_auto.set()
@@ -97,9 +96,8 @@ async def send_comment(message: Message, state: FSMContext):
 
 async def user_info_back(message: Message, state: FSMContext):
     try:
-        data = await rname_user(telegram_id=message.from_user.id)
-        real_name = ''.join(data)
         user_data = await state.get_data()
+        real_name = user_data['real_name']
         number_auto = user_data['number_auto']
         await message.answer(f"Ваше имя: {real_name}\n"
                              f"Ваш гос. знак - {number_auto}.\n"
@@ -132,11 +130,11 @@ async def user_litre_back(message: Message, state: FSMContext):
 
 
 def register_info(dp: Dispatcher):
-    dp.register_message_handler(user_info, commands=["morning", 'start'], state=Name.start_day)
+    dp.register_message_handler(user_info, commands=["morning", 'start'])
     dp.register_message_handler(user_number, state=Name.send_number_auto)
     dp.register_message_handler(user_road_list, state=Name.send_road_list)
     dp.register_message_handler(user_odometer, state=Name.send_odometer)
     dp.register_message_handler(send_comment, state=Name.send_comment)
-    dp.register_message_handler(user_info_back, commands=["evening"], state=Name.start_close_day)
+    dp.register_message_handler(user_info_back, commands=["evening"])
     dp.register_message_handler(user_odometer_back, state=Name.send_odometer_back)
     dp.register_message_handler(user_litre_back, state=Name.send_litre_back)

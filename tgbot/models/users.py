@@ -26,18 +26,10 @@ async def update_user(telegram_id, rname):
     con.commit()
 
 
-async def rname_user(telegram_id):
-    sql = """select "Полное имя" from users where "Телеграм ID" = ?"""
-    cur.execute(sql, (telegram_id,))
-    params = cur.fetchone()
-    con.commit()
-    return params
-
-
-async def update_info_user(telegram_id, number_auto, road_list, odometer, odometer_back, litre_back):
-    sql = """Update users set "Номер авто" = ?, "Путевой лист" = ?, "Одометр выезд" = ?, "Одометр заезд" = ?, 
+async def update_info_user(telegram_id, real_name, number_auto, road_list, odometer, odometer_back, litre_back):
+    sql = """Update users set "Полное имя" = ?, "Номер авто" = ?, "Путевой лист" = ?, "Одометр выезд" = ?, "Одометр заезд" = ?, 
     "Литров заезд" = ? where "Телеграм ID" = ?"""
-    data = (number_auto, road_list, odometer, odometer_back, litre_back, telegram_id)
+    data = (real_name, number_auto, road_list, odometer, odometer_back, litre_back, telegram_id)
     cur.execute(sql, data)
     con.commit()
 
