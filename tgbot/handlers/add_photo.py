@@ -3,9 +3,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
 from tgbot.config import load_config
-from tgbot.keyboards.inline import start_close
+from tgbot.handlers.add_info import user_info_back
 from tgbot.keyboards.reply import answer_day
-from tgbot.misc import album
 from tgbot.misc.album import make_album
 from tgbot.misc.states import Name
 from tgbot.models.users import update_info_user, rname_user
@@ -79,19 +78,20 @@ async def user_auto_right(message: Message, state: FSMContext):
     else:
         photo_five = message.photo[0].file_id
         await state.update_data(photo_five=photo_five)
-        await message.answer(f'✅ Благодарим за заполнение отчета, хорошего дня!', reply_markup=start_close)
+        await message.answer(f'✅ Благодарим за заполнение отчета, хорошего дня! \n'
+                             f'Чтобы начать заполнения данных на вечер, нажмите /evening')
         text_user = f'{real_name} начал рейс на автомобиле {number_auto}, путевой номер {road_list}, ' \
                     f'одометр на выезд {odometer}, комментарий {comments_user}.'
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
-        await state.reset_state(with_data=False)
+        await Name.start_close_day.set()
 
 
 # Фото заезд.
 
 async def user_fuel_back(message: Message, state: FSMContext):
-    if message.text == '/edit':
-        await message.answer(f'Чтобы поменять данные вечер, нажмите кнопку!', reply_markup=start_close)
-        await state.reset_state(with_data=False)
+    if message.text:
+        await message.answer(f'Отправлен текст, необходимо фото, повторите отправку фото!')
+        await Name.send_fuel_back.set()
     else:
         photo_six = message.photo[0].file_id
         await state.update_data(photo_six=photo_six)
@@ -131,7 +131,7 @@ async def new_day(message: Message, state: FSMContext):
                     f'{odometer_back}, количество литров - {litre_back}, комментариев нет.'
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         await state.reset_state(with_data=False)
-    elif message.text and not message.text == '/edit':
+    elif message.text and not message.text == '/evening':
         reply_markup = types.ReplyKeyboardRemove()
         text = f'✅ Комментарий успешно отправлен! \n' \
                f'Благодарим за заполнения отчета, хорошего отдыха! \n' \
@@ -144,8 +144,7 @@ async def new_day(message: Message, state: FSMContext):
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         await state.reset_state(with_data=False)
     else:
-        await message.answer(f'Чтобы поменять данные вечер, нажмите кнопку!', reply_markup=start_close)
-        await state.reset_state(with_data=False)
+        await user_info_back(message, state)
 
 
 def register_photo(dp: Dispatcher):
@@ -160,5 +159,5 @@ def register_photo(dp: Dispatcher):
     dp.register_message_handler(user_auto_right, content_types=types.ContentTypes.PHOTO, state=Name.send_auto_right)
     dp.register_message_handler(user_auto_right, commands=['start'], state=Name.send_auto_right)
     dp.register_message_handler(user_fuel_back, content_types=types.ContentTypes.PHOTO, state=Name.send_fuel_back)
-    dp.register_message_handler(user_fuel_back, commands=['edit'], state=Name.send_fuel_back)
+    dp.register_message_handler(user_fuel_back, content_types=types.ContentTypes.TEXT, state=Name.send_fuel_back)
     dp.register_message_handler(new_day, state=Name.new_day)

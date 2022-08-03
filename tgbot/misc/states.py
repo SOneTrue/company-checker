@@ -17,6 +17,7 @@ class Name(StatesGroup):
     send_auto_left = State()
     send_auto_right = State()
     # Текстовая информация заезд
+    start_close_day = State()
     send_odometer_back = State()
     send_litre_back = State()
     # Фото заезд

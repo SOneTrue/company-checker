@@ -1,10 +1,8 @@
 from aiogram import Dispatcher, Bot, types
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 
 from tgbot.config import load_config
-from tgbot.filters.button_filter import Button
-from tgbot.keyboards.inline import start_close
 from tgbot.keyboards.reply import answer, number_auto_key
 from tgbot.misc.form import to_control, docs
 from tgbot.misc.states import Name
@@ -16,17 +14,15 @@ bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
 
 # Выезд.
 
-async def user_info(call: CallbackQuery):
-    if not call.message.text == '/start':
-        await call.message.edit_reply_markup()
-        await call.message.delete()
-        data = await rname_user(telegram_id=call.from_user.id)
+async def user_info(message: Message):
+    if message.text == '/morning' and message.text != '/start':
+        data = await rname_user(telegram_id=message.from_user.id)
         real_name = ''.join(data)
-        await call.message.answer(f"Ваше имя: {real_name}")
-        await call.message.answer(f'Выберите государственный номер авто. транспорта.', reply_markup=number_auto_key)
+        await message.answer(f"Ваше имя: {real_name}")
+        await message.answer(f'Выберите государственный номер авто. транспорта.', reply_markup=number_auto_key)
         await Name.send_number_auto.set()
     else:
-        await call.message.answer("Вы начали заново - введите Фамилию, Имя и Отчество для дальнейшей работы.")
+        await message.answer("Вы начали заново - введите Фамилию, Имя и Отчество для дальнейшей работы.")
         await Name.send_name.set()
 
 
@@ -99,49 +95,48 @@ async def send_comment(message: Message, state: FSMContext):
 # Заезд.
 
 
-async def user_info_back(call: CallbackQuery, state: FSMContext):
-    await call.message.edit_reply_markup()
-    await call.message.delete()
-    data = await rname_user(telegram_id=call.from_user.id)
-    real_name = ''.join(data)
-    user_data = await state.get_data()
-    number_auto = user_data['number_auto']
-    await call.message.answer(f"Ваше имя: {real_name}\n"
-                              f"Ваш гос. знак - {number_auto}.\n"
-                              f"Введите одометр на заезд.")
-    await Name.send_odometer_back.set()
+async def user_info_back(message: Message, state: FSMContext):
+    try:
+        data = await rname_user(telegram_id=message.from_user.id)
+        real_name = ''.join(data)
+        user_data = await state.get_data()
+        number_auto = user_data['number_auto']
+        await message.answer(f"Ваше имя: {real_name}\n"
+                             f"Ваш гос. знак - {number_auto}.\n"
+                             f"Введите одометр на заезд.")
+        await Name.send_odometer_back.set()
+    except KeyError:
+        await message.answer(f'Начните сначала, вы не заполняли данные на вечер, нажмите /start!')
 
 
 async def user_odometer_back(message: Message, state: FSMContext):
-    if not message.text == '/edit':
+    if not message.text == '/evening':
         await message.answer(f"✅Одометр заполнен.\n"
                              f"Количество заправленого топлива в литрах.")
         odometer_back = message.text
         await state.update_data(odometer_back=odometer_back)
         await Name.send_litre_back.set()
     else:
-        await message.answer(f'Чтобы поменять данные вечер, нажмите кнопку!', reply_markup=start_close)
-        await state.reset_state(with_data=False)
+        await user_info_back(message, state)
 
 
 async def user_litre_back(message: Message, state: FSMContext):
-    if not message.text == '/edit':
+    if not message.text == '/evening':
         await message.answer(f"✅Литры заполнены.\n"
                              f"Отправьте фото <b>датчика топлива</b> на заезд!")
         litre_back = message.text
         await state.update_data(litre_back=litre_back)
         await Name.send_fuel_back.set()
     else:
-        await message.answer(f'Чтобы поменять данные вечер, нажмите кнопку!', reply_markup=start_close)
-        await state.reset_state(with_data=False)
+        await user_info_back(message, state)
 
 
 def register_info(dp: Dispatcher):
-    dp.register_callback_query_handler(user_info, Button('exit'), state=Name.start_day)
+    dp.register_message_handler(user_info, commands=["morning", 'start'], state=Name.start_day)
     dp.register_message_handler(user_number, state=Name.send_number_auto)
     dp.register_message_handler(user_road_list, state=Name.send_road_list)
     dp.register_message_handler(user_odometer, state=Name.send_odometer)
     dp.register_message_handler(send_comment, state=Name.send_comment)
-    dp.register_callback_query_handler(user_info_back, Button('close'))
+    dp.register_message_handler(user_info_back, commands=["evening"], state=Name.start_close_day)
     dp.register_message_handler(user_odometer_back, state=Name.send_odometer_back)
     dp.register_message_handler(user_litre_back, state=Name.send_litre_back)
