@@ -82,7 +82,7 @@ async def user_auto_right(message: Message, state: FSMContext):
         text_user = f'{real_name} начал рейс на автомобиле {number_auto}, путевой номер {road_list}, ' \
                     f'одометр на выезд {odometer}, комментарий {comments_user}.'
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
-        await Name.start_close_day.set()
+        await state.reset_state(with_data=False)
 
 
 # Фото заезд.
@@ -113,9 +113,8 @@ async def user_fuel_back(message: Message, state: FSMContext):
 
 async def new_day(message: Message, state: FSMContext):
     # Текст с данными.
-    data = await rname_user(telegram_id=message.from_user.id)
-    real_name = ''.join(data)
     user_data = await state.get_data()
+    real_name = user_data['real_name']
     number_auto = user_data['number_auto']
     road_list = user_data['road_list']
     odometer_back = user_data['odometer_back']

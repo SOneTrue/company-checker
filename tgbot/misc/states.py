@@ -4,7 +4,6 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 class Name(StatesGroup):
     # Текстовая информация выезд
     send_name = State()
-    start_day = State()
     send_number_auto = State()
     send_road_list = State()
     send_odometer = State()
@@ -17,7 +16,6 @@ class Name(StatesGroup):
     send_auto_left = State()
     send_auto_right = State()
     # Текстовая информация заезд
-    start_close_day = State()
     send_odometer_back = State()
     send_litre_back = State()
     # Фото заезд
