@@ -7,7 +7,7 @@ from tgbot.handlers.add_info import user_info_back
 from tgbot.keyboards.reply import answer_day
 from tgbot.misc.album import make_album
 from tgbot.misc.states import Name
-from tgbot.models.users import update_info_user, add_user
+from tgbot.models.users import update_info_user
 
 config = load_config(".env")
 bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
@@ -85,39 +85,29 @@ async def user_fuel_back(message: Message, state: FSMContext):
     else:
         await state.update_data(photo_six=message.photo[0].file_id)
         await message.answer(
-            f'Оставьте комментарий, если были выявлены неисправности в течении дня или нажмите кнопку "Нет".',
+            f'Оставьте комментарий, если были выявлены неисправности в течении дня или нажмите кнопку "нет".',
             reply_markup=answer_day)
         user_data = await state.get_data()
-        await add_user(telegram_id=message.from_user.id, username=None, fname=None, lname=None, real_name=user_data['real_name'],
-                       number_auto=user_data['number_auto'],
-                       road_list=user_data['road_list'], odometer=user_data['odometer'],
-                       odometer_back=user_data['odometer_back'], litre_back=user_data['litre_back'])
+        await update_info_user(telegram_id=message.from_user.id, real_name=user_data['real_name'],
+                               number_auto=user_data['number_auto'], road_list=user_data['road_list'],
+                               odometer=user_data['odometer'], odometer_back=user_data['odometer_back'],
+                               litre_back=user_data['litre_back'])
         await Name.new_day.set()
 
 
 async def new_day(message: Message, state: FSMContext):
-    # Текст с данными.
-    user_data = await state.get_data()
-    text_user = f'{user_data["real_name"]} закончил рейс на автомобиле {user_data["number_auto"]}, путевой номер {user_data["road_list"]}, одометр на заезд ' \
-                f'{user_data["odometer_back"]}, количество литров - {user_data["litre_back"]}, комментарий - {message.text}.'
-    if message.text == 'Нет':
-        album = await make_album(state)
-        await bot.send_media_group(chat_id=config.tg_bot.group, media=album)
-        await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
-        await state.reset_state(with_data=True)
+    if not message.text == '/evening':
         text = f'✅ Комментарий успешно отправлен! \n' \
                f'Благодарим за заполнения отчета, хорошего отдыха! \n' \
                f'Чтобы начать новый день нажмите на --> /start'
         await message.answer(text=text, reply_markup=types.ReplyKeyboardRemove())
-    elif message.text and not message.text == '/evening':
+        user_data = await state.get_data()
+        text_user = f'{user_data["real_name"]} закончил рейс на автомобиле {user_data["number_auto"]}, путевой номер {user_data["road_list"]}, одометр на заезд ' \
+                    f'{user_data["odometer_back"]}, количество литров - {user_data["litre_back"]}, комментарий - {message.text}.'
         album = await make_album(state)
         await bot.send_media_group(chat_id=config.tg_bot.group, media=album)
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         await state.reset_state(with_data=True)
-        text = f'✅ Комментарий успешно отправлен! \n' \
-               f'Благодарим за заполнения отчета, хорошего отдыха! \n' \
-               f'Чтобы начать новый день нажмите на --> /start'
-        await message.answer(text=text, reply_markup=types.ReplyKeyboardRemove())
     else:
         await user_info_back(message, state)
 
