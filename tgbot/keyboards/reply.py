@@ -8,7 +8,7 @@ answer = ListOfButtons(text=['Верно'],
                        callback=['good'],
                        align=[1]).reply_keyboard
 
-answer_day = ListOfButtons(text=['Нет'],
+answer_day = ListOfButtons(text=['нет'],
                            callback=['no'],
                            align=[1]).reply_keyboard
 

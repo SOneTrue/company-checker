@@ -19,7 +19,7 @@ class DbMiddleware(LifetimeControllerMiddleware):
                               username=username,
                               fname=first_name,
                               lname=telegram_user.last_name,
-                              rname=None,
+                              real_name=None,
                               number_auto=None,
                               road_list=None,
                               odometer=None,

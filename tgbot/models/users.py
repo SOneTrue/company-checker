@@ -5,12 +5,12 @@ con = sqlite3.connect("tgbot/models/database.db")
 cur = con.cursor()
 
 
-async def add_user(telegram_id, username, fname, lname, rname, number_auto, road_list, odometer, odometer_back,
+async def add_user(telegram_id, username, fname, lname, real_name, number_auto, road_list, odometer, odometer_back,
                    litre_back):
     sql = """INSERT INTO users("Телеграм ID", "Пользовательский ник", "Имя", "Фамилия", "Полное имя", "Номер авто", 
     "Путевой лист", "Одометр выезд", "Одометр заезд", "Литров заезд")
                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
-    data = (telegram_id, username, fname, lname, rname, number_auto, road_list, odometer, odometer_back, litre_back)
+    data = (telegram_id, username, fname, lname, real_name, number_auto, road_list, odometer, odometer_back, litre_back)
     try:
         cur.execute(sql, data)
         con.commit()
