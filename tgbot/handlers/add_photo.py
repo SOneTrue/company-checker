@@ -101,11 +101,11 @@ async def new_day(message: Message, state: FSMContext):
                f'Благодарим за заполнения отчета, хорошего отдыха! \n' \
                f'Чтобы начать новый день нажмите на --> /start'
         await message.answer(text=text, reply_markup=types.ReplyKeyboardRemove())
+        album = await make_album(state)
+        await bot.send_media_group(chat_id=config.tg_bot.group, media=album)
         user_data = await state.get_data()
         text_user = f'{user_data["real_name"]} закончил рейс на автомобиле {user_data["number_auto"]}, путевой номер {user_data["road_list"]}, одометр на заезд ' \
                     f'{user_data["odometer_back"]}, количество литров - {user_data["litre_back"]}, комментарий - {message.text}.'
-        album = await make_album(state)
-        await bot.send_media_group(chat_id=config.tg_bot.group, media=album)
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         await state.reset_state(with_data=True)
     else:

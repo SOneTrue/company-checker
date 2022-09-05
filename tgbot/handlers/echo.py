@@ -2,7 +2,6 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 
 
-
 async def bot_echo(message: types.Message, state: FSMContext):
     text = [
         f'⛔️ Введены неверные данные, перепроверьте что требуется отправить, текст или фотографию!\n'
