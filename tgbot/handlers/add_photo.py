@@ -70,8 +70,8 @@ async def user_auto_right(message: Message, state: FSMContext):
         await state.update_data(photo_five=photo_five)
         await message.answer(f'✅ Благодарим за заполнение отчета, хорошего дня! \n'
                              f'Чтобы начать заполнения данных на вечер, нажмите /evening')
-        text_user = f'{user_data["real_name"]} начал рейс на автомобиле {user_data["number_auto"]}, путевой номер {user_data["road_list"]}, ' \
-                    f'одометр на выезд {user_data["odometer"]}, комментарий {user_data["comments_user"]}.'
+        text_user = f'{user_data["real_name"]} начал рейс на автомобиле {user_data["number_auto"]}, ' \
+                    f'путевой номер {user_data["road_list"]}, комментарий {user_data["comments_user"]}.'
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         await state.reset_state(with_data=False)
 
@@ -104,8 +104,10 @@ async def new_day(message: Message, state: FSMContext):
         album = await make_album(state)
         await bot.send_media_group(chat_id=config.tg_bot.group, media=album)
         user_data = await state.get_data()
-        text_user = f'{user_data["real_name"]} закончил рейс на автомобиле {user_data["number_auto"]}, путевой номер {user_data["road_list"]}, одометр на заезд ' \
-                    f'{user_data["odometer_back"]}, количество литров - {user_data["litre_back"]}, комментарий - {message.text}.'
+        text_user = f'{user_data["real_name"]} закончил рейс на автомобиле {user_data["number_auto"]}, ' \
+                    f'путевой номер {user_data["road_list"]}, одометр: выезд {user_data["odometer"]}, ' \
+                    f'заезд {user_data["odometer_back"]}, количество литров - {user_data["litre_back"]}, ' \
+                    f'комментарий - {message.text}.'
         await bot.send_message(chat_id=config.tg_bot.group, text=text_user)
         await state.reset_state(with_data=True)
     else:

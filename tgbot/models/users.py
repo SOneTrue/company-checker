@@ -25,7 +25,6 @@ async def update_user(telegram_id, rname):
     cur.execute(sql, data)
     con.commit()
 
-
 async def update_info_user(telegram_id, real_name, number_auto, road_list, odometer, odometer_back, litre_back):
     sql = """Update users set "Полное имя" = ?, "Номер авто" = ?, "Путевой лист" = ?, "Одометр выезд" = ?, "Одометр заезд" = ?, 
     "Литров заезд" = ? where "Телеграм ID" = ?"""
@@ -38,3 +37,4 @@ async def delete_info():
     sql = """DELETE FROM users"""
     cur.execute(sql)
     con.commit()
+
