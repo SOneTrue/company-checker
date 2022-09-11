@@ -1,7 +1,8 @@
 import sqlite3
 from sqlite3 import IntegrityError
 
-con = sqlite3.connect("tgbot/models/database.db")
+file_path = "C:\\Users\\WORK\\PycharmProjects\\company-checker\\tgbot\\models\\database.db"
+con = sqlite3.connect(file_path)
 cur = con.cursor()
 
 

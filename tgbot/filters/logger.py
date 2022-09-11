@@ -25,5 +25,4 @@ async def setup_logger(level: Union[str, int] = "DEBUG", ignored: List[str] = ""
     logging.basicConfig(handlers=[InterceptHandler()], level=logging.getLevelName(level))
     for ignore in ignored:
         logger.disable(ignore)
-    logger.add("somefile.log", enqueue=True)
     logger.info('Logging is successfully configured')
