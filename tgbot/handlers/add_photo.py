@@ -88,10 +88,10 @@ async def user_fuel_back(message: Message, state: FSMContext):
             f'Оставьте комментарий, если были выявлены неисправности в течении дня или нажмите кнопку "нет".',
             reply_markup=answer_day)
         user_data = await state.get_data()
-        await update_info_user(telegram_id=message.from_user.id, real_name=user_data['real_name'],
-                               number_auto=user_data['number_auto'], road_list=user_data['road_list'],
-                               odometer=user_data['odometer'], odometer_back=user_data['odometer_back'],
-                               litre_back=user_data['litre_back'])
+        await update_info_user(real_name=user_data['real_name'], number_auto=user_data['number_auto'],
+                               road_list=user_data['road_list'], odometer=user_data['odometer'],
+                               odometer_back=user_data['odometer_back'], litre_back=user_data['litre_back'],
+                               telegram_id=message.from_user.id)
         await Name.new_day.set()
 
 
