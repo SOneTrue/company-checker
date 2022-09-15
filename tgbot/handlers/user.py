@@ -27,6 +27,10 @@ async def add_user_name(message: Message, state: FSMContext):
         else:
             await add_user(telegram_id=telegram_id, username=None, real_name=real_name, number_auto=None,
                            road_list=None, odometer=None, odometer_back=None, litre_back=None)
+            await state.update_data(real_name=message.text)
+            await message.answer(
+                '<b>✅ ФИО успешно добавлено, чтобы начать заполнение информации нажмите на кнопку /morning </b>', )
+            await state.reset_state(with_data=False)
     else:
         await message.answer("⛔️Не верное имя или неправильно заполнено поле, повторите ввод ФИО!")
         await Name.send_name.set()
